@@ -4,14 +4,25 @@ Local **`kind`** cluster **`cxr-lab`** runs the rehearsal CXR UI image. This doe
 
 ## Quick start (recommended)
 
+**Full stack (Terraform + Helm + Argo + test):**
+
 ```bash
 cd /home/udonsi-kalu/staging/cxr-ops-lab
 export PATH="$PWD/bin:$PATH"
+./scripts/15-e2e-deploy.sh
+```
+
+**App only:**
+
+```bash
 ./scripts/03-k8-up.sh
 kubectl port-forward -n cxr-ui svc/cxr-ui 8081:3000 --address=127.0.0.1
 ```
 
-Browser: **http://localhost:8081**
+| URL | Service |
+|-----|---------|
+| http://localhost:8081 | CXR UI (K8) |
+| https://localhost:8083 | Argo CD UI |
 
 Persistent access: `systemctl --user enable --now cxr-k8-forward` (see `docs/PERSISTENT-PORTS.md`).
 

@@ -23,7 +23,7 @@ resource "null_resource" "kind_cluster" {
     working_dir = local.ops_lab
     environment = {
       CXR_KIND_CLUSTER = var.cluster_name
-      PATH             = "${local.ops_lab}/bin:${env("PATH")}"
+      PATH             = "${local.ops_lab}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     }
   }
 }

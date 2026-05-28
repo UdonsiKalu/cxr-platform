@@ -67,16 +67,16 @@ else
   fail "argocd-server missing"
 fi
 
-if command -v argocd &>/dev/null; then
-  if argocd app get cxr-ui --grpc-web &>/dev/null; then
-    sync=$(argocd app get cxr-ui --grpc-web -o json 2>/dev/null | grep -o '"sync":{"status":"[^"]*"' | head -1 || true)
-    health=$(argocd app get cxr-ui --grpc-web -o json 2>/dev/null | grep -o '"health":{"status":"[^"]*"' | head -1 || true)
-    pass "argocd app cxr-ui ($sync $health)"
+if kubectl --context "$CTX" get application cxr-ui -n argocd &>/dev/null; then
+  sync=$(kubectl --context "$CTX" get application cxr-ui -n argocd -o jsonpath='{.status.sync.status}' 2>/dev/null || echo "?")
+  health=$(kubectl --context "$CTX" get application cxr-ui -n argocd -o jsonpath='{.status.health.status}' 2>/dev/null || echo "?")
+  if [[ "$sync" == "Synced" && "$health" == "Healthy" ]]; then
+    pass "argocd application/cxr-ui sync=$sync health=$health"
   else
-    fail "argocd app cxr-ui not registered"
+    fail "argocd application/cxr-ui sync=$sync health=$health"
   fi
 else
-  echo "  [SKIP] argocd CLI not in PATH"
+  fail "argocd application/cxr-ui missing"
 fi
 
 echo ""

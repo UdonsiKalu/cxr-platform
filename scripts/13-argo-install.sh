@@ -37,8 +37,31 @@ echo ""
 export CXR_ARGO_REPO_URL="${CXR_ARGO_REPO_URL:-https://github.com/UdonsiKalu/cxr-ops-lab.git}"
 export CXR_ARGO_REPO_REVISION="${CXR_ARGO_REPO_REVISION:-main}"
 
+TOKEN=""
+if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+  TOKEN="$GITHUB_TOKEN"
+elif command -v gh &>/dev/null; then
+  TOKEN="$(gh auth token 2>/dev/null || true)"
+fi
+if [[ -n "$TOKEN" ]]; then
+  kubectl create secret generic repo-cxr-ops-lab -n argocd \
+    --from-literal=type=git \
+    --from-literal=url="$CXR_ARGO_REPO_URL" \
+    --from-literal=username=git \
+    --from-literal=password="$TOKEN" \
+    --dry-run=client -o yaml | kubectl apply -f -
+  kubectl label secret repo-cxr-ops-lab -n argocd \
+    argocd.argoproj.io/secret-type=repository --overwrite
+fi
+
 echo "Applying Application from Git: $CXR_ARGO_REPO_URL ($CXR_ARGO_REPO_REVISION)"
 envsubst '$CXR_ARGO_REPO_URL $CXR_ARGO_REPO_REVISION' < "$ROOT/k8s/argocd/application-cxr-ui.yaml" | kubectl apply -f -
 
-echo "  kubectl get application cxr-ui -n argocd"
-echo "  argocd app sync cxr-ui   # after: argocd login localhost:8083"
+for _ in $(seq 1 36); do
+  sync=$(kubectl get application cxr-ui -n argocd -o jsonpath='{.status.sync.status}' 2>/dev/null || echo "")
+  health=$(kubectl get application cxr-ui -n argocd -o jsonpath='{.status.health.status}' 2>/dev/null || echo "")
+  [[ "$sync" == "Synced" && "$health" == "Healthy" ]] && break
+  kubectl annotate application cxr-ui -n argocd argocd.argoproj.io/refresh=hard --overwrite 2>/dev/null || true
+  sleep 5
+done
+kubectl get application cxr-ui -n argocd

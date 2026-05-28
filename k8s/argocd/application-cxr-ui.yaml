@@ -1,6 +1,6 @@
 # SW.8 — Argo CD Application (requires Git repo with this chart).
 # Set CXR_ARGO_REPO_URL before apply, e.g.:
-#   export CXR_ARGO_REPO_URL=https://github.com/YOUR_USER/YOUR_REPO.git
+#   export CXR_ARGO_REPO_URL=https://github.com/UdonsiKalu/cxr-ops-lab.git
 #   export CXR_ARGO_REPO_REVISION=main
 #   envsubst < k8s/argocd/application-cxr-ui.yaml | kubectl apply -f -
 apiVersion: argoproj.io/v1alpha1
