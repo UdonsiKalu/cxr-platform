@@ -1,0 +1,17 @@
+[Unit]
+Description=CXR ops lab Docker compose (port 3000)
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-ops-lab
+Environment=CXR_SKIP_COMPOSE_BUILD=1
+Environment=CXR_COMPOSE_QDRANT=1
+ExecStart=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/04-compose-up.sh
+ExecStop=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/04-compose-down.sh
+TimeoutStartSec=3600
+
+[Install]
+WantedBy=cxr-lab.target

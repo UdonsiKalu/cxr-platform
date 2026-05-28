@@ -1,0 +1,15 @@
+[Unit]
+Description=CXR SW.1 Docker UI (port 3002)
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-ops-lab
+ExecStart=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/11-sw1-up.sh
+ExecStop=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/11-sw1-down.sh
+TimeoutStartSec=3600
+
+[Install]
+WantedBy=cxr-lab.target

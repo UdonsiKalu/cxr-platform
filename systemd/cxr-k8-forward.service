@@ -1,0 +1,16 @@
+[Unit]
+Description=CXR K8 port-forward (localhost 8081)
+After=docker.service network-online.target cxr-sw1-test.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-ops-lab
+Environment=PATH=/home/udonsi-kalu/staging/cxr-ops-lab/bin:/usr/local/bin:/usr/bin:/bin
+ExecStartPre=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/12-k8-ensure.sh
+ExecStart=/home/udonsi-kalu/staging/cxr-ops-lab/bin/kubectl port-forward -n cxr-ui svc/cxr-ui 8081:3000 --address=127.0.0.1
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=cxr-lab.target

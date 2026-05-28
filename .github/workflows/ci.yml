@@ -1,0 +1,17 @@
+# RETIRED — bootcamp CI lives only in cxr-ui-rehearsal
+# https://github.com/UdonsiKalu/cxr-ui-rehearsal/blob/chore/rehearsal-high-risk-batch11/.github/workflows/ci.yml
+# See cxr-ops-lab/docs/BOOTCAMP-CI.md
+
+name: cxr-ops-lab-ci-retired
+
+on:
+  workflow_dispatch:
+
+jobs:
+  retired:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use cxr-ui-rehearsal instead
+        run: |
+          echo "::error::This workflow is retired. Bootcamp CI is only in the cxr-ui-rehearsal repo (.github/workflows/ci.yml, workflow cxr-bootcamp-ci)."
+          exit 1

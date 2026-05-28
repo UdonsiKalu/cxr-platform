@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cxr-ui
+  namespace: cxr-ui
+  labels:
+    app: cxr-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cxr-ui
+  template:
+    metadata:
+      labels:
+        app: cxr-ui
+    spec:
+      containers:
+        - name: cxr-ui
+          image: nginx:alpine
+          ports:
+            - containerPort: 80

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cxr-ui
+  namespace: cxr-ui
+  labels:
+    app: cxr-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cxr-ui
+  template:
+    metadata:
+      labels:
+        app: cxr-ui
+    spec:
+      containers:
+        - name: cxr-ui
+          image: cxr-ui:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10

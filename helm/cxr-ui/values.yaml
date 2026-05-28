@@ -1,0 +1,38 @@
+namespace: cxr-ui
+
+image:
+  repository: cxr-ui
+  tag: local
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  port: 3000
+
+env:
+  NODE_ENV: production
+
+# Bootcamp: SQL/Qdrant/analyzers stay on host or Compose (see docs/K8-M48-DEPENDENCIES.md).
+# Uncomment when wiring in-cluster or ExternalName services later:
+# externalDependencies:
+#   qdrantUrl: ""
+#   sqlHost: ""
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+probes:
+  readiness:
+    path: /
+    initialDelaySeconds: 15
+    periodSeconds: 10
+  liveness:
+    path: /
+    initialDelaySeconds: 30
+    periodSeconds: 20

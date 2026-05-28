@@ -1,0 +1,30 @@
+# SW.9–11 starter — Prometheus + Grafana (persist across reboot / Cursor restart)
+# Scrape config: observe/prometheus.yml (not this file — see docs below)
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observe/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: Bbanwo@1980!
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./observe/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observe/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus_data:
+  grafana_data:

@@ -1,0 +1,15 @@
+[Unit]
+Description=CXR observe stack — Prometheus :9090 + Grafana :3001
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-ops-lab
+ExecStart=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/07-observe-up.sh
+ExecStop=/home/udonsi-kalu/staging/cxr-ops-lab/scripts/07-observe-down.sh
+TimeoutStartSec=600
+
+[Install]
+WantedBy=cxr-lab.target
