@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant App as Lab script / future API
+  participant Redis as Redis :6379
+  participant Source as JSON file or DB
+
+  App->>Redis: GET cxr:claim:analyzed:{id}
+  alt cache miss
+    Redis-->>App: (nil)
+    App->>Source: load artifact
+    Source-->>App: claim JSON
+    App->>Redis: SETEX key TTL payload
+  else cache hit
+    Redis-->>App: cached JSON
+  end
+  Note over App,Redis: Invalidate on write: DEL key

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package cxr.v1;
+
+// SW.16 — hypothetical internal RPC between gateway/BFF and analysis kernel.
+// Not wired to Claim Studio :3000 (REST + spawn remains the live path).
+
+service ClaimAnalysis {
+  rpc GetClaimStatus(GetClaimStatusRequest) returns (ClaimStatusResponse);
+  rpc AnalyzeClaim(AnalyzeClaimRequest) returns (AnalyzeClaimResponse);
+}
+
+message GetClaimStatusRequest {
+  string claim_id = 1;
+}
+
+message ClaimStatusResponse {
+  string claim_id = 1;
+  string status = 2;
+  string summary = 3;
+}
+
+message AnalyzeClaimRequest {
+  string claim_id = 1;
+  string content = 2;
+}
+
+message AnalyzeClaimResponse {
+  string claim_id = 1;
+  string status = 2;
+  string summary = 3;
+  int64 latency_ms = 4;
+}

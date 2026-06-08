@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# SW.8 — Install Argo CD on kind cxr-lab (bootcamp GitOps lab).
+# SW.8 — Install Argo CD (Docker Desktop K8 or kind).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export PATH="$ROOT/bin:${PATH:-}"
+# shellcheck source=lib/kind-common.sh
+source "$ROOT/scripts/lib/kind-common.sh"
 
-if ! kubectl cluster-info --context "kind-${CXR_KIND_CLUSTER:-cxr-lab}" &>/dev/null; then
-  echo "kind cluster not ready; run ./scripts/03-k8-up.sh first" >&2
-  exit 1
-fi
+require_kubectl "$ROOT"
+echo "Argo CD target cluster: $(kubectl config current-context) ($(cxr_k8_runtime))"
 
 if ! command -v helm &>/dev/null; then
   echo "helm not found; run $ROOT/scripts/00-install-tools.sh" >&2
@@ -54,14 +54,28 @@ if [[ -n "$TOKEN" ]]; then
     argocd.argoproj.io/secret-type=repository --overwrite
 fi
 
-echo "Applying Application from Git: $CXR_ARGO_REPO_URL ($CXR_ARGO_REPO_REVISION)"
-envsubst '$CXR_ARGO_REPO_URL $CXR_ARGO_REPO_REVISION' < "$ROOT/k8s/argocd/application-cxr-ui.yaml" | kubectl apply -f -
-
-for _ in $(seq 1 36); do
-  sync=$(kubectl get application cxr-ui -n argocd -o jsonpath='{.status.sync.status}' 2>/dev/null || echo "")
-  health=$(kubectl get application cxr-ui -n argocd -o jsonpath='{.status.health.status}' 2>/dev/null || echo "")
-  [[ "$sync" == "Synced" && "$health" == "Healthy" ]] && break
-  kubectl annotate application cxr-ui -n argocd argocd.argoproj.io/refresh=hard --overwrite 2>/dev/null || true
-  sleep 5
+echo "Applying Applications from Git: $CXR_ARGO_REPO_URL ($CXR_ARGO_REPO_REVISION)"
+for manifest in application-cxr-analyzer.yaml application-cxr-ui.yaml; do
+  envsubst '$CXR_ARGO_REPO_URL $CXR_ARGO_REPO_REVISION' < "$ROOT/k8s/argocd/$manifest" | kubectl apply -f -
 done
-kubectl get application cxr-ui -n argocd
+
+wait_app() {
+  local app="$1"
+  for _ in $(seq 1 36); do
+    sync=$(kubectl get application "$app" -n argocd -o jsonpath='{.status.sync.status}' 2>/dev/null || echo "")
+    health=$(kubectl get application "$app" -n argocd -o jsonpath='{.status.health.status}' 2>/dev/null || echo "")
+    [[ "$sync" == "Synced" && "$health" == "Healthy" ]] && return 0
+    kubectl annotate application "$app" -n argocd argocd.argoproj.io/refresh=hard --overwrite 2>/dev/null || true
+    sleep 5
+  done
+  return 1
+}
+
+for app in cxr-analyzer cxr-ui; do
+  echo "Waiting for $app..."
+  wait_app "$app" || echo "WARN: $app not Synced/Healthy yet (analyzer warm boot may take 7–15m)"
+done
+kubectl get application -n argocd
+echo ""
+echo "Verify: $ROOT/scripts/14-argo-verify.sh"
+echo "GitOps loop: edit helm/*/values.yaml → git push → Argo syncs"

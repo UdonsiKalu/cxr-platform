@@ -1,0 +1,12 @@
+# SW.15 golden path — run against http://localhost:4000/graphql
+query Sw15GoldenPath {
+  claim(id: "demo-1") {
+    id
+    status
+    summary
+  }
+  policyForClaim(claimId: "demo-1") {
+    code
+    description
+  }
+}

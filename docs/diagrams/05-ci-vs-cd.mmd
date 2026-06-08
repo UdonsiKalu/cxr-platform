@@ -1,0 +1,4 @@
+flowchart LR
+  PUSH1[push cxr-ui-rehearsal] --> CI["GitHub Actions CI<br/>build, Playwright, Trivy"]
+  PUSH2[push cxr-ops-lab] --> ARGO["Argo CD sync<br/>helm/cxr-ui"]
+  ARGO --> K8[kind cluster cxr-lab]

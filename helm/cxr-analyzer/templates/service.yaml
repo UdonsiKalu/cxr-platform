@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cxr-analyzer
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: cxr-analyzer
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app: cxr-analyzer
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http

@@ -1,0 +1,27 @@
+# SW.8 — Argo CD Application for analyzer + HPA chart.
+# Apply via scripts/13-argo-install.sh (envsubst).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cxr-analyzer
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ${CXR_ARGO_REPO_URL}
+    targetRevision: ${CXR_ARGO_REPO_REVISION}
+    path: helm/cxr-analyzer
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cxr-ui
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

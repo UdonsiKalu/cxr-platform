@@ -1,0 +1,35 @@
+# CI extend (ops-lab): validate K8 image builds on push.
+# Canonical app CI remains cxr-ui-rehearsal — see docs/BOOTCAMP-CI.md
+name: build-k8-images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile.analyzer'
+      - 'requirements-analyzer-docker.txt'
+      - 'helm/**'
+      - '.github/workflows/build-k8-images.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Dockerfile.analyzer'
+      - 'requirements-analyzer-docker.txt'
+  workflow_dispatch:
+
+jobs:
+  build-analyzer-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build cxr-analyzer image (smoke)
+        run: |
+          docker build -f Dockerfile.analyzer -t cxr-analyzer:ci-${{ github.sha }} .
+          docker image inspect cxr-analyzer:ci-${{ github.sha }} >/dev/null
+          echo "Analyzer image build OK"
+
+      - name: Note on cxr-ui image
+        run: |
+          echo "cxr-ui image is built from cxr-ui-rehearsal CI (CI-001)."
+          echo "Desktop K8 uses local tag cxr-ui:local from rehearsal build."

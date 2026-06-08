@@ -1,0 +1,13 @@
+flowchart TB
+  app["Application cxr-ui<br/>(Argo CD)"]
+  ns[Namespace cxr-ui]
+  svc[Service cxr-ui]
+  dep[Deployment cxr-ui]
+  rs[ReplicaSet]
+  pod["Pod 1/1 Running"]
+
+  app --> ns
+  ns --> svc
+  ns --> dep
+  dep --> rs
+  rs --> pod

@@ -1,0 +1,22 @@
+# SW.15 — federated schema reference (composed by gateway at runtime)
+# Subgraph SDL sources: claims-subgraph.mjs, policies-subgraph.mjs
+
+type Claim {
+  id: ID!
+  status: String!
+  summary: String
+}
+
+type Policy {
+  id: ID!
+  claimId: ID!
+  code: String!
+  description: String
+}
+
+type Query {
+  claim(id: ID!): Claim
+  claims: [Claim!]!
+  policies: [Policy!]!
+  policyForClaim(claimId: ID!): Policy
+}

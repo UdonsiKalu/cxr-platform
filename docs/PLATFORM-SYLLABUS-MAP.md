@@ -16,13 +16,13 @@ From `CXR-Syllabus-Case-Study-Study-Plan.md` **SW.1–SW.18**. This is **what ea
 | **SW.9** | Prometheus | Scrape HTTP metrics | After app runs in K8/compose |
 | **SW.10** | Grafana | Dashboards on Prometheus | With SW.9 |
 | **SW.11** | OpenTelemetry | Trace browser → API → Qdrant/DB | With SW.9; ties **M1.6** |
-| **SW.12** | ELK | Log shipping (optional) | Optional / skip with ADR |
+| **SW.12** | ELK | `compose.elk.yaml` + `16-elk-up.sh` → Kibana :5601 | `docs/CXR-ELK-LAB-MANUAL.md` |
 | **SW.13** | **Kafka** or RabbitMQ | **Async events** (claim submitted, audit done) | **Lab only** — not in current CXR UI path; relates **M5.4** messaging |
-| **SW.14** | Redis | Cache-aside for hot reads | Lab — optional for policy/artifact cache |
-| **SW.15** | GraphQL gateway | Syllabus **lab** pattern (Apollo + mocks) | Not prod CXR REST spine |
-| **SW.16** | gRPC | Internal RPC sketch vs `platform/` | Read-only unless you add hello server |
-| **SW.17** | Vault + K8s secrets | Map **M4.3** env to secrets | After SW.3–4 |
-| **SW.18** | Langfuse | LLM trace + eval | After you have an LLM call path |
+| **SW.14** | Redis | `compose.redis.yaml` + `17-redis-up.sh` → :6379; `lab/redis-cache-aside.sh` | `docs/CXR-REDIS-LAB-MANUAL.md` |
+| **SW.15** | GraphQL | `compose.graphql.yaml` + `18-graphql-up.sh` → gateway :4000 | `docs/CXR-GRAPHQL-LAB-MANUAL.md` |
+| **SW.16** | gRPC | `compose.grpc.yaml` + `19-grpc-up.sh` → :50051 + grpcui :8090 | `docs/CXR-GRPC-LAB-MANUAL.md` |
+| **SW.17** | Vault + K8s secrets | `compose.vault.yaml` + `20-vault-up.sh` → :8200 | `docs/CXR-VAULT-LAB-MANUAL.md` |
+| **SW.18** | Langfuse | `compose.langfuse.yaml` + `21-langfuse-up.sh` → :3100 | `docs/CXR-LANGFUSE-LAB-MANUAL.md` |
 
 ## Two paths in the syllabus
 

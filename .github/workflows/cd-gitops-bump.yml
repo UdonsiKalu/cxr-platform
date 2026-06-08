@@ -1,0 +1,35 @@
+# CD-001: bump gitOpsDeployMarker in Helm values → commit → Argo CD syncs on cluster.
+name: cd-gitops-bump
+
+on:
+  workflow_run:
+    workflows: [build-k8-images]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump-deploy-marker:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump gitOpsDeployMarker
+        run: |
+          MARKER="gha-${{ github.sha }}"
+          MARKER="${MARKER:0:20}"
+          for f in helm/cxr-analyzer/values.yaml helm/cxr-ui/values.yaml; do
+            sed -i "s/^gitOpsDeployMarker:.*/gitOpsDeployMarker: \"${MARKER}\"/" "$f"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add helm/cxr-analyzer/values.yaml helm/cxr-ui/values.yaml
+          git diff --staged --quiet && echo "No marker change" && exit 0
+          git commit -m "cd: bump gitOpsDeployMarker to ${MARKER}"
+          git push

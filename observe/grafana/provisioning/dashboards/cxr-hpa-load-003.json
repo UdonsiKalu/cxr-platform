@@ -1,0 +1,36 @@
+{
+  "title": "CXR HPA Load (LOAD-003 / OBS-001)",
+  "uid": "cxr-hpa-load-003",
+  "tags": ["cxr", "hpa", "load-003", "obs-001"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "text",
+      "title": "LOAD-003 evidence",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "## OBS-001 — HPA under Locust\n\nPrimary time-series from **`collect_load_metrics.py`** + **`plot_load_test.py`** (portfolio `kubernetes-analyzer-saturation/`).\n\nLive K8: `kubectl get hpa -n cxr-ui -w` or `./scripts/k8-hpa-watch.sh`.\n\nPrometheus here scrapes compose **:3000** by default — import CSV panels or add kube-state-metrics for in-cluster replica metrics."
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Prometheus targets up",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "up", "legendFormat": "{{job}}" }],
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "Compose UI scrape (if up)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "up{job=\"cxr-ui-host\"}", "legendFormat": "cxr-ui-host" }],
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+    }
+  ]
+}

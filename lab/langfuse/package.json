@@ -1,0 +1,8 @@
+{
+  "name": "cxr-sw18-langfuse-lab",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "langfuse": "^3.38.4"
+  }
+}

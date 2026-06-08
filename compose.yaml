@@ -15,6 +15,8 @@ services:
   cxr-ui:
     image: cxr-ui:compose
     restart: unless-stopped
+    labels:
+      cxr.bootcamp.logs: "true"
     ports:
       - "3000:3000"
     env_file:

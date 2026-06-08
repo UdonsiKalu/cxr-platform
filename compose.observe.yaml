@@ -1,5 +1,5 @@
-# SW.9–11 starter — Prometheus + Grafana (persist across reboot / Cursor restart)
-# Scrape config: observe/prometheus.yml (not this file — see docs below)
+# SW.9–11 — Prometheus + Grafana + OpenTelemetry (SW.11) + Jaeger
+# Config: observe/prometheus.yml, observe/otel-collector-config.yaml
 
 services:
   prometheus:
@@ -10,6 +10,8 @@ services:
     volumes:
       - ./observe/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
+    networks:
+      - cxr_observe
 
   grafana:
     image: grafana/grafana:11.2.0
@@ -20,10 +22,40 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: Bbanwo@1980!
     volumes:
       - grafana_data:/var/lib/grafana
+      # Single mount: dashboard JSON must live under provisioning/dashboards/ beside default.yml
       - ./observe/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./observe/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
     depends_on:
       - prometheus
+    networks:
+      - cxr_observe
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    restart: unless-stopped
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"
+    networks:
+      - cxr_observe
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yaml"]
+    ports:
+      - "4318:4318"
+      - "4317:4317"
+    volumes:
+      - ./observe/otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    depends_on:
+      - jaeger
+    networks:
+      - cxr_observe
+
+networks:
+  cxr_observe:
+    name: cxr_observe
 
 volumes:
   prometheus_data:

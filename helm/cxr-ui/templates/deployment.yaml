@@ -17,6 +17,8 @@ spec:
       labels:
         app: cxr-ui
         app.kubernetes.io/name: cxr-ui
+      annotations:
+        cxr.gitops/deploy-marker: {{ .Values.gitOpsDeployMarker | quote }}
     spec:
       containers:
         - name: cxr-ui
@@ -28,6 +30,10 @@ spec:
           env:
             - name: NODE_ENV
               value: {{ .Values.env.NODE_ENV | quote }}
+            {{- if .Values.analyzerUrl }}
+            - name: ANALYZER_URL
+              value: {{ .Values.analyzerUrl | quote }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           readinessProbe:

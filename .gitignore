@@ -1,7 +1,15 @@
 .env.compose.local
+lab/langfuse/keys.env
 data/
 bin/
 terraform/.terraform/
 terraform/.terraform.lock.hcl
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
+
+# LaTeX build artifacts (keep .tex and final .pdf only)
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/* (Copy)*.pdf

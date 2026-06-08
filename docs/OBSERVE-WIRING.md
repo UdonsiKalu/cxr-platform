@@ -1,30 +1,58 @@
-# Observe stack — two YAML files (why both exist)
+# Observe stack — wiring (SW.9–11)
 
 | File | Role |
 |------|------|
-| **`compose.observe.yaml`** | **Docker Compose** — starts/stops containers (Prometheus, Grafana), ports, restart policy, named volumes for persistence |
-| **`observe/prometheus.yml`** | **Prometheus config** — what to scrape (jobs, targets, paths). Mounted *into* the Prometheus container at `/etc/prometheus/prometheus.yml` |
+| **`compose.observe.yaml`** | Docker Compose — Prometheus, Grafana, **Jaeger**, **otel-collector** |
+| **`observe/prometheus.yml`** | Prometheus scrape config |
+| **`observe/otel-collector-config.yaml`** | Collector receives OTLP, exports to Jaeger |
+| **`observe/grafana/provisioning/`** | Grafana datasources + dashboards |
 
-Grafana wiring is also in **`compose.observe.yaml`** (image, port **3001**, password env, volume mounts).  
-Grafana datasource/dashboard **provisioning** lives under **`observe/grafana/provisioning/`** (not a second compose file).
+## URLs
+
+| URL | Service |
+|-----|---------|
+| http://localhost:9090 | Prometheus |
+| http://localhost:3001 | Grafana |
+| http://localhost:16686 | **Jaeger UI (traces)** |
+| http://localhost:4318 | **OTel Collector OTLP HTTP** |
+
+## SW.11 instrumentation
+
+- **App:** `cxr-ui-prune-rehearsal/cxr-ui/instrumentation.ts`
+- **Enable:** set `OTEL_EXPORTER_OTLP_ENDPOINT` (see `.env.otel.example`)
+- **Rehearsal :8251:** `http://127.0.0.1:4318`
+- **Compose :3000:** `compose.otel-link.yaml` + rebuild `cxr-ui:compose`
+
+## Commands
+
+```bash
+./scripts/07-observe-up.sh
+./scripts/11-otel-smoke.sh
+```
+
+Manual: `docs/CXR-OTEL-LAB-MANUAL.pdf` (`./scripts/build-otel-manual-pdf.sh`).
 
 ## Connection to rehearsal
 
-- **Not** wired inside `cxr-ui-rehearsal` GitHub CI workflow.
-- **Runtime link:** Prometheus scrapes a **running** app URL (e.g. `host.docker.internal:3000` from compose lab), configured in `prometheus.yml`.
-- Daily rehearsal dev (**:8251**) is separate unless you add a scrape target for it.
+- **Not** in `cxr-ui-rehearsal` GitHub CI.
+- Prometheus still scrapes compose :3000 when configured in `prometheus.yml`.
+- Traces require OTel env on the running Next.js process.
 
-## Persistence (reboot / Cursor / browser)
+## SW.12 logs (ELK — separate compose)
 
-- **Browser/Cursor restart** does not stop Grafana — only closing Docker or stopping the observe stack does.
-- **Named volumes:** `grafana_data`, `prometheus_data` keep DB + metrics across container recreate.
-- **systemd:** `cxr-observe.service` + `cxr-lab.target` auto-start observe with other lab ports.
+| URL | Service |
+|-----|---------|
+| http://localhost:9200 | Elasticsearch |
+| http://localhost:5601 | **Kibana UI (logs)** |
 
 ```bash
-cd cxr-ops-lab
-./scripts/09-enable-persistent-ports.sh   # installs cxr-observe.service
-# or one-off:
-./scripts/07-observe-up.sh
+./scripts/16-elk-up.sh
+./scripts/16-elk-smoke.sh
 ```
 
-Grafana: http://localhost:3001 — login persists in `grafana_data` volume.
+Manual: `docs/CXR-ELK-LAB-MANUAL.pdf` (`./scripts/build-elk-manual-pdf.sh`) · Evidence: `evidence/SW12-elk-verify-2026-05-29.md`
+
+## Persistence
+
+- Volumes: `grafana_data`, `prometheus_data`, `elk_es_data`
+- systemd: `cxr-observe.service` via `09-enable-persistent-ports.sh`

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cxr-analyzer
+description: CXR warm claim analyzer (FastAPI :8766) with HPA
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

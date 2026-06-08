@@ -1,0 +1,10 @@
+{
+  "name": "cxr-sw16-grpc-lab",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.12.6",
+    "@grpc/proto-loader": "^0.7.13",
+    "@grpc/reflection": "^1.0.4"
+  }
+}

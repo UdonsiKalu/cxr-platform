@@ -1,0 +1,29 @@
+flowchart TB
+  subgraph prep [Preparation]
+    TF[Terraform or 01-kind-cluster]
+    BUILD[02-build-and-load cxr-ui:local]
+  end
+
+  subgraph cluster [kind cxr-lab]
+    HELM[05-helm-install Helm]
+    ARGO[13-argo-install Argo CD]
+    POD[Pod cxr-ui :3000]
+    HELM --> POD
+    ARGO --> POD
+  end
+
+  subgraph access [Host access]
+    PF[port-forward :8081]
+    ARGOUI[:8083 Argo UI]
+  end
+
+  TF --> cluster
+  BUILD --> cluster
+  POD --> PF
+  ARGO --> ARGOUI
+
+  subgraph git [GitHub cxr-ops-lab]
+    CHART[helm/cxr-ui]
+  end
+
+  CHART --> ARGO

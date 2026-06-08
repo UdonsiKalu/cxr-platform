@@ -1,0 +1,31 @@
+# SW.12 — ship Docker container logs to Elasticsearch (cxr-ui compose container).
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: false
+      templates:
+        - condition:
+            or:
+              - contains:
+                  docker.container.name: cxr-ui
+              - equals:
+                  docker.container.labels.cxr_bootcamp_logs: "true"
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              json.keys_under_root: true
+              json.add_error_key: true
+              json.message_key: log
+
+processors:
+  - add_docker_metadata: ~
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  allow_older_versions: true
+
+setup.ilm.enabled: false
+setup.template.enabled: true
+setup.kibana:
+  host: "http://kibana:5601"

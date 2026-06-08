@@ -1,10 +1,8 @@
-# Bootcamp CI — not in this folder
+# Bootcamp CI policy
 
-**GitHub Actions for the bootcamp run in one place only:**
+| Repo | Role | Workflow |
+|------|------|----------|
+| **cxr-ui-rehearsal** | Canonical app CI (**CI-001**) | `ci.yml` — build, Playwright, Docker, Trivy |
+| **cxr-ops-lab** | K8 images + GitOps values | `build-k8-images.yml`, `cd-gitops-bump.yml` |
 
-- **Repository:** [cxr-ui-rehearsal](https://github.com/UdonsiKalu/cxr-ui-rehearsal)
-- **Workflow:** `.github/workflows/ci.yml` (`cxr-bootcamp-ci`)
-
-This ops-lab tree is for **local** Docker, Compose, Kubernetes, Helm, Kafka, and observability scripts. Use `scripts/04-compose-up.sh`, `03-deploy.sh`, etc.—not a second CI YAML.
-
-The file `.github/workflows/ci.yml` here is **retired** (manual dispatch only, fails with a pointer message).
+Do **not** duplicate full app CI in ops-lab. Ops-lab validates **Dockerfile.analyzer** smoke build and bumps **`gitOpsDeployMarker`** for **CD-001** → Argo sync.

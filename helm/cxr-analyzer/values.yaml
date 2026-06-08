@@ -1,0 +1,55 @@
+namespace: cxr-ui
+
+# CD-001: bumped by GHA on push; Argo syncs this chart from Git.
+gitOpsDeployMarker: "manual"
+
+image:
+  repository: cxr-analyzer
+  tag: local
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  port: 8766
+
+# Reach host SQL / Qdrant from kind pods (see kind/cxr-lab.yaml extraHosts)
+hostGateway: host.docker.internal
+
+env:
+  CXR_ANALYZER_HOST: "0.0.0.0"
+  CXR_ANALYZER_PORT: "8766"
+  CXR_TRACE_PROFILE: detailed
+  OTEL_SERVICE_NAME: cxr-analyzer-service
+  CXR_QDRANT_URL: "http://host.docker.internal:6333"
+  CXR_SQL_SERVER: "host.docker.internal,1433"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://host.docker.internal:4318"
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: "2"
+    memory: 6Gi
+
+probes:
+  readiness:
+    path: /health/ready
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 30
+  liveness:
+    path: /health
+    initialDelaySeconds: 120
+    periodSeconds: 30
+  startup:
+    path: /health/ready
+    periodSeconds: 10
+    failureThreshold: 60
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
