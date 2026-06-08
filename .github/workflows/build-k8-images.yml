@@ -1,5 +1,9 @@
-# CI extend (ops-lab): validate K8 image builds on push.
+# CI extend (ops-lab): validate Helm/GitOps; optional full analyzer image build.
 # Canonical app CI remains cxr-ui-rehearsal — see docs/BOOTCAMP-CI.md
+#
+# Full Docker build needs analyzer source (not in this repo). Locally:
+#   CXR_ANALYZER_SRC=../cxrlabs-dev/claim_analysis_tools ./scripts/02-build-analyzer-docker-only.sh
+# On GHA: set repo variable CXR_ANALYZER_REPO + secret CXR_ANALYZER_CHECKOUT (PAT with repo read).
 name: build-k8-images
 
 on:
@@ -15,21 +19,81 @@ on:
     paths:
       - 'Dockerfile.analyzer'
       - 'requirements-analyzer-docker.txt'
+      - 'helm/**'
+      - '.github/workflows/build-k8-images.yml'
   workflow_dispatch:
+    inputs:
+      full_analyzer_build:
+        description: 'Run full analyzer Docker build (needs CXR_ANALYZER_* secret + repo var)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 jobs:
-  build-analyzer-image:
+  validate-gitops:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Lint Helm charts (GITOPS source)
+        run: |
+          helm lint helm/cxr-analyzer
+          helm lint helm/cxr-ui
+          test -f Dockerfile.analyzer
+          test -f requirements-analyzer-docker.txt
+          echo "Helm charts + analyzer Dockerfile present — GitOps validate OK"
+
+  build-analyzer-image:
+    runs-on: ubuntu-latest
+    needs: validate-gitops
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.full_analyzer_build == 'true')
+      || (github.event_name != 'workflow_dispatch' && secrets.CXR_ANALYZER_CHECKOUT != '' && vars.CXR_ANALYZER_REPO != '')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ops-lab
+
+      - name: Checkout analyzer source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.CXR_ANALYZER_REPO }}
+          token: ${{ secrets.CXR_ANALYZER_CHECKOUT }}
+          path: analyzer-src
+
+      - name: Verify analyzer entrypoint
+        run: |
+          test -f analyzer-src/analyzer_service_app.py
+          test -f analyzer-src/archetype_catalog_v3_1_master/cxr_kernel_v4_final.py
+
       - name: Build cxr-analyzer image (smoke)
         run: |
-          docker build -f Dockerfile.analyzer -t cxr-analyzer:ci-${{ github.sha }} .
+          cp ops-lab/requirements-analyzer-docker.txt analyzer-src/requirements-analyzer-docker.txt
+          docker build -f ops-lab/Dockerfile.analyzer -t cxr-analyzer:ci-${{ github.sha }} analyzer-src
           docker image inspect cxr-analyzer:ci-${{ github.sha }} >/dev/null
           echo "Analyzer image build OK"
 
-      - name: Note on cxr-ui image
+  analyzer-build-skipped:
+    runs-on: ubuntu-latest
+    needs: validate-gitops
+    if: >-
+      !(github.event_name == 'workflow_dispatch' && github.event.inputs.full_analyzer_build == 'true')
+      && (secrets.CXR_ANALYZER_CHECKOUT == '' || vars.CXR_ANALYZER_REPO == '')
+    steps:
+      - name: Note — full build is local-only until analyzer is on GitHub
         run: |
+          echo "Skipping full analyzer Docker build on GHA."
+          echo "Analyzer source lives under cxrlabs-dev/claim_analysis_tools (local mount for K8)."
+          echo "Local: ./scripts/02-build-analyzer-docker-only.sh"
+          echo "To enable GHA build: push analyzer files to a GitHub repo, then set:"
+          echo "  Settings → Variables → CXR_ANALYZER_REPO (e.g. UdonsiKalu/your-analyzer-repo)"
+          echo "  Settings → Secrets  → CXR_ANALYZER_CHECKOUT (PAT with Contents:read)"
           echo "cxr-ui image is built from cxr-ui-rehearsal CI (CI-001)."
-          echo "Desktop K8 uses local tag cxr-ui:local from rehearsal build."
