@@ -1,6 +1,6 @@
 namespace: cxr-ui
 
-gitOpsDeployMarker: "manual"
+gitOpsDeployMarker: "gitops-001-verify"
 
 image:
   repository: cxr-ui
