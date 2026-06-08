@@ -1,6 +1,6 @@
 namespace: cxr-ui
 
-gitOpsDeployMarker: "gha-d4591b226b8b435d"
+gitOpsDeployMarker: "locust-test-182027"
 
 image:
   repository: cxr-ui
