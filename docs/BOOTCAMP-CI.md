@@ -10,7 +10,9 @@ Do **not** duplicate full app CI in ops-lab. **`build-k8-images`** always lints 
 ### Enable full analyzer build on GHA (optional)
 
 1. Push analyzer files (`analyzer_service_app.py`, `archetype_catalog_v3_1_master/`, …) to a GitHub repo you control.
-2. **cxr-ops-lab** → Settings → Variables → **`CXR_ANALYZER_REPO`** (e.g. `UdonsiKalu/my-cxr-analyzer`).
+2. **cxr-ops-lab** → Settings → Variables:
+   - **`CXR_ANALYZER_BUILD_ENABLED`** = `true`
+   - **`CXR_ANALYZER_REPO`** (e.g. `UdonsiKalu/my-cxr-analyzer`)
 3. Settings → Secrets → **`CXR_ANALYZER_CHECKOUT`** = PAT with **Contents: read** on that repo.
 
 Local build (always works):

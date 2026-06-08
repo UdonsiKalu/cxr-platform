@@ -56,7 +56,7 @@ jobs:
     needs: validate-gitops
     if: >-
       (github.event_name == 'workflow_dispatch' && github.event.inputs.full_analyzer_build == 'true')
-      || (github.event_name != 'workflow_dispatch' && secrets.CXR_ANALYZER_CHECKOUT != '' && vars.CXR_ANALYZER_REPO != '')
+      || (github.event_name != 'workflow_dispatch' && vars.CXR_ANALYZER_BUILD_ENABLED == 'true')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,14 +86,15 @@ jobs:
     needs: validate-gitops
     if: >-
       !(github.event_name == 'workflow_dispatch' && github.event.inputs.full_analyzer_build == 'true')
-      && (secrets.CXR_ANALYZER_CHECKOUT == '' || vars.CXR_ANALYZER_REPO == '')
+      && vars.CXR_ANALYZER_BUILD_ENABLED != 'true'
     steps:
       - name: Note — full build is local-only until analyzer is on GitHub
         run: |
           echo "Skipping full analyzer Docker build on GHA."
           echo "Analyzer source lives under cxrlabs-dev/claim_analysis_tools (local mount for K8)."
           echo "Local: ./scripts/02-build-analyzer-docker-only.sh"
-          echo "To enable GHA build: push analyzer files to a GitHub repo, then set:"
-          echo "  Settings → Variables → CXR_ANALYZER_REPO (e.g. UdonsiKalu/your-analyzer-repo)"
-          echo "  Settings → Secrets  → CXR_ANALYZER_CHECKOUT (PAT with Contents:read)"
+          echo "To enable GHA build, set repo variables/secrets:"
+          echo "  CXR_ANALYZER_BUILD_ENABLED=true"
+          echo "  CXR_ANALYZER_REPO (e.g. UdonsiKalu/your-analyzer-repo)"
+          echo "  CXR_ANALYZER_CHECKOUT (PAT with Contents:read)"
           echo "cxr-ui image is built from cxr-ui-rehearsal CI (CI-001)."
