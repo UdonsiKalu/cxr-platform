@@ -1,7 +1,7 @@
 namespace: cxr-ui
 
 # CD-001: bumped by GHA on push; Argo syncs this chart from Git.
-gitOpsDeployMarker: "gha-f2256372706695d2"
+gitOpsDeployMarker: "gha-859b22ba53ad8d16"
 
 image:
   repository: cxr-analyzer
