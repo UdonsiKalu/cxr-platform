@@ -4,33 +4,81 @@
   "tags": ["cxr", "hpa", "load-003", "obs-001"],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
-  "refresh": "30s",
+  "version": 2,
+  "refresh": "5s",
+  "time": { "from": "now-30m", "to": "now" },
   "panels": [
     {
       "type": "text",
-      "title": "LOAD-003 evidence",
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "title": "Live load test",
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
       "options": {
         "mode": "markdown",
-        "content": "## OBS-001 — HPA under Locust\n\nPrimary time-series from **`collect_load_metrics.py`** + **`plot_load_test.py`** (portfolio `kubernetes-analyzer-saturation/`).\n\nLive K8: `kubectl get hpa -n cxr-ui -w` or `./scripts/k8-hpa-watch.sh`.\n\nPrometheus here scrapes compose **:3000** by default — import CSV panels or add kube-state-metrics for in-cluster replica metrics."
+        "content": "**Live:** `./scripts/23-k8-load-observe-up.sh` · Locust **:8092** → K8 **:8081** · Jaeger **cxr-analyzer-service** · CSV still via `run-k8-load-with-metrics.sh`"
       }
     },
     {
       "type": "timeseries",
-      "title": "Prometheus targets up",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "title": "HPA current replicas (cxr-ui namespace)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 3 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "targets": [{ "expr": "up", "legendFormat": "{{job}}" }],
-      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+      "targets": [
+        {
+          "expr": "kube_horizontalpodautoscaler_status_current_replicas{namespace=\"cxr-ui\"}",
+          "legendFormat": "{{horizontalpodautoscaler}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
     },
     {
       "type": "timeseries",
-      "title": "Compose UI scrape (if up)",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "title": "HPA max replicas (spec)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 3 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "targets": [{ "expr": "up{job=\"cxr-ui-host\"}", "legendFormat": "cxr-ui-host" }],
-      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+      "targets": [
+        {
+          "expr": "kube_horizontalpodautoscaler_spec_max_replicas{namespace=\"cxr-ui\"}",
+          "legendFormat": "{{horizontalpodautoscaler}} max"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "Deployment replicas available",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "kube_deployment_status_replicas_available{namespace=\"cxr-ui\", deployment=~\"cxr-analyzer|cxr-ui\"}",
+          "legendFormat": "{{deployment}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "Pending pods",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(kube_pod_status_phase{namespace=\"cxr-ui\", phase=\"Pending\"})",
+          "legendFormat": "pending"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "Prometheus scrape health",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 19 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "up{job=\"kube-state-metrics\"}", "legendFormat": "kube-state-metrics" },
+        { "expr": "up{job=\"prometheus\"}", "legendFormat": "prometheus" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "max": 1, "min": 0 }, "overrides": [] }
     }
   ]
 }

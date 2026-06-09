@@ -15,6 +15,12 @@ service:
 env:
   NODE_ENV: production
 
+# SW.11 — OTLP to host observe stack (Jaeger via collector :4318)
+otel:
+  enabled: true
+  exporterEndpoint: "http://host.docker.internal:4318"
+  serviceName: cxr-ui-k8
+
 # In-cluster analyzer (cxr-analyzer Helm release). Empty = subprocess fallback (broken in K8 UI image).
 analyzerUrl: "http://cxr-analyzer:8766"
 

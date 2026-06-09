@@ -12,3 +12,11 @@ scrape_configs:
       - targets: ["host.docker.internal:3000"]
         labels:
           service: cxr-ui-compose
+
+  # kube-state-metrics — start scripts/k8-ksm-port-forward.sh (host :9091)
+  - job_name: kube-state-metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["host.docker.internal:9091"]
+        labels:
+          cluster: docker-desktop
