@@ -13,3 +13,4 @@ docs/*.log
 docs/*.out
 docs/*.toc
 docs/* (Copy)*.pdf
+.venv/

@@ -1,82 +1,169 @@
 {
-  "title": "CXR HPA Load (LOAD-003 / OBS-001)",
+  "title": "CXR LOAD-003 — Load test (live + history)",
   "uid": "cxr-hpa-load-003",
-  "tags": ["cxr", "hpa", "load-003", "obs-001"],
+  "tags": ["cxr", "hpa", "load-003", "obs-001", "locust"],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 2,
+  "version": 4,
   "refresh": "5s",
   "time": { "from": "now-30m", "to": "now" },
   "panels": [
     {
       "type": "text",
-      "title": "Live load test",
+      "title": "Setup",
       "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
       "options": {
         "mode": "markdown",
-        "content": "**Live:** `./scripts/23-k8-load-observe-up.sh` · Locust **:8092** → K8 **:8081** · Jaeger **cxr-analyzer-service** · CSV still via `run-k8-load-with-metrics.sh`"
+        "content": "**Start:** `./scripts/23-k8-load-observe-up.sh` · Locust **:8092** → K8 **:8081** · Change time range for **history** (e.g. Last 2h). Prometheus retains ~15d."
       }
     },
     {
       "type": "timeseries",
-      "title": "HPA current replicas (cxr-ui namespace)",
+      "title": "Load vs throughput",
+      "description": "Locust users + RPS (cxr-load-exporter)",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 3 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        {
-          "expr": "kube_horizontalpodautoscaler_status_current_replicas{namespace=\"cxr-ui\"}",
-          "legendFormat": "{{horizontalpodautoscaler}}"
-        }
+        { "expr": "cxr_locust_users", "legendFormat": "users" },
+        { "expr": "cxr_locust_rps", "legendFormat": "RPS" }
       ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "line", "lineWidth": 2 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "users" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#2563eb", "mode": "fixed" } },
+              { "id": "custom.axisPlacement", "value": "left" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "RPS" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#16a34a", "mode": "fixed" } },
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "unit", "value": "reqps" }
+            ]
+          }
+        ]
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
     },
     {
       "type": "timeseries",
-      "title": "HPA max replicas (spec)",
+      "title": "Response time (Locust client)",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 3 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        {
-          "expr": "kube_horizontalpodautoscaler_spec_max_replicas{namespace=\"cxr-ui\"}",
-          "legendFormat": "{{horizontalpodautoscaler}} max"
-        }
+        { "expr": "cxr_locust_p50_ms", "legendFormat": "p50" },
+        { "expr": "cxr_locust_p95_ms", "legendFormat": "p95" },
+        { "expr": "cxr_locust_failures_per_second", "legendFormat": "failures/s" }
       ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+      "fieldConfig": {
+        "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "p50" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#ca8a04", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "p95" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#dc2626", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "failures/s" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#6b7280", "mode": "fixed" } },
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "unit", "value": "reqps" }
+            ]
+          }
+        ]
+      }
     },
     {
       "type": "timeseries",
-      "title": "Deployment replicas available",
+      "title": "HPA signals + replica count",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 11 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        {
-          "expr": "kube_deployment_status_replicas_available{namespace=\"cxr-ui\", deployment=~\"cxr-analyzer|cxr-ui\"}",
-          "legendFormat": "{{deployment}}"
-        }
+        { "expr": "cxr_hpa_analyzer_current_cpu_percent", "legendFormat": "analyzer CPU % (HPA)" },
+        { "expr": "cxr_hpa_analyzer_target_cpu_percent", "legendFormat": "analyzer target %" },
+        { "expr": "cxr_hpa_ui_current_cpu_percent", "legendFormat": "ui CPU % (HPA)" },
+        { "expr": "cxr_analyzer_replicas", "legendFormat": "analyzer replicas" },
+        { "expr": "cxr_ui_replicas", "legendFormat": "ui replicas" }
       ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".*CPU.*" },
+            "properties": [
+              { "id": "unit", "value": "percent" },
+              { "id": "custom.axisPlacement", "value": "left" }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*target.*" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } },
+              { "id": "custom.lineWidth", "value": 1 }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*replicas" },
+            "properties": [
+              { "id": "unit", "value": "short" },
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "min", "value": 0 }
+            ]
+          }
+        ]
+      }
     },
     {
       "type": "timeseries",
-      "title": "Pending pods",
+      "title": "Node capacity + scheduling pressure",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 11 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        {
-          "expr": "sum(kube_pod_status_phase{namespace=\"cxr-ui\", phase=\"Pending\"})",
-          "legendFormat": "pending"
-        }
+        { "expr": "cxr_node_cpu_percent", "legendFormat": "node CPU %" },
+        { "expr": "cxr_node_memory_percent", "legendFormat": "node memory %" },
+        { "expr": "cxr_analyzer_pending_pods", "legendFormat": "analyzer pending" },
+        { "expr": "cxr_ui_pending_pods", "legendFormat": "ui pending" }
       ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "node.*" },
+            "properties": [
+              { "id": "unit", "value": "percent" },
+              { "id": "custom.axisPlacement", "value": "left" }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*pending" },
+            "properties": [
+              { "id": "unit", "value": "short" },
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "min", "value": 0 },
+              { "id": "custom.drawStyle", "value": "bars" },
+              { "id": "custom.fillOpacity", "value": 40 }
+            ]
+          }
+        ]
+      }
     },
     {
       "type": "timeseries",
-      "title": "Prometheus scrape health",
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 19 },
+      "title": "Scrape health",
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 19 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
+        { "expr": "up{job=\"cxr-load-exporter\"}", "legendFormat": "cxr-load-exporter" },
         { "expr": "up{job=\"kube-state-metrics\"}", "legendFormat": "kube-state-metrics" },
-        { "expr": "up{job=\"prometheus\"}", "legendFormat": "prometheus" }
+        { "expr": "cxr_load_exporter_up", "legendFormat": "exporter poll OK" }
       ],
       "fieldConfig": { "defaults": { "unit": "short", "max": 1, "min": 0 }, "overrides": [] }
     }

@@ -20,3 +20,11 @@ scrape_configs:
       - targets: ["host.docker.internal:9091"]
         labels:
           cluster: docker-desktop
+
+  # Locust + kubectl load metrics — scripts/k8-load-exporter.sh (host :9102)
+  - job_name: cxr-load-exporter
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:9102"]
+        labels:
+          cluster: docker-desktop
