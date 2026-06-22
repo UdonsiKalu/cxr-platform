@@ -9,5 +9,8 @@ FROM cxr-analyzer:perf003
 WORKDIR /app
 
 COPY analyzer_metrics.py analyzer_service_app.py /app/
+# Thread-safe SQL in ContextCollector (pyodbc "Connection is busy" under concurrent /analyze).
+COPY archetype_catalog_v3_1_master/cxr_kernel_v3_2_integrated.py \
+  /app/archetype_catalog_v3_1_master/cxr_kernel_v3_2_integrated.py
 
 RUN pip install --no-cache-dir 'prometheus-client>=0.20.0'
