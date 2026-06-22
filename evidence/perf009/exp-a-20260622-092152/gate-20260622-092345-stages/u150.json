@@ -1,0 +1,15 @@
+{
+  "csv": "/home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf009/exp-a-20260622-092152/gate-20260622-092345-cumulative.csv",
+  "users_target": 150,
+  "samples": 7,
+  "max_users": 160.0,
+  "max_rps": 74.2,
+  "max_p95_ms": 770.0,
+  "max_failures_per_s": 0.0,
+  "max_analyzer_replicas": 6,
+  "max_pending_pods": 0,
+  "collapse_count": 0,
+  "collapses": [],
+  "pass": true,
+  "reasons": []
+}

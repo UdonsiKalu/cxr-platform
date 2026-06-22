@@ -1,0 +1,154 @@
+{
+  "fast_candidates": 80,
+  "slow_candidates": 80,
+  "fast_traces": [
+    {
+      "trace_id": "3d11d4847b117c20359447a64fdf0802",
+      "total_ms": 148.4,
+      "spans": {
+        "ui_total": 148.39,
+        "ui_route": 145.322,
+        "analyzer_http": 144.109,
+        "http_wait": 22.943000000000012,
+        "analyze_request": 121.166,
+        "claim_analysis": 119.768,
+        "archetype_reasoning": 91.455,
+        "context_builder": 27.042,
+        "policy_extraction": 25.22,
+        "retrieval": 0.077,
+        "llm_inference": 0.021,
+        "save_result": 0.037
+      },
+      "url": "http://127.0.0.1:16686/trace/3d11d4847b117c20359447a64fdf0802"
+    },
+    {
+      "trace_id": "9cbe002e33bf57f06c419d8627f5e8f0",
+      "total_ms": 152.9,
+      "spans": {
+        "ui_total": 152.926,
+        "ui_route": 150.796,
+        "analyzer_http": 149.782,
+        "http_wait": 125.47900000000001,
+        "analyze_request": 24.303,
+        "claim_analysis": 22.985,
+        "archetype_reasoning": 19.002,
+        "context_builder": 3.202,
+        "policy_extraction": 2.267,
+        "retrieval": 0.03,
+        "llm_inference": 0.011,
+        "save_result": 0.033
+      },
+      "url": "http://127.0.0.1:16686/trace/9cbe002e33bf57f06c419d8627f5e8f0"
+    },
+    {
+      "trace_id": "1be230468cb9f4df44b9bfa775a06d7b",
+      "total_ms": 146.0,
+      "spans": {
+        "ui_total": 146.012,
+        "ui_route": 141.814,
+        "analyzer_http": 140.357,
+        "http_wait": 47.464,
+        "analyze_request": 92.893,
+        "claim_analysis": 90.702,
+        "archetype_reasoning": 22.642,
+        "context_builder": 66.904,
+        "policy_extraction": 65.725,
+        "retrieval": 0.029,
+        "llm_inference": 0.027,
+        "save_result": 0.106
+      },
+      "url": "http://127.0.0.1:16686/trace/1be230468cb9f4df44b9bfa775a06d7b"
+    }
+  ],
+  "slow_traces": [
+    {
+      "trace_id": "557390ac4a4b2323329f145b139754d6",
+      "total_ms": 793.9,
+      "spans": {
+        "ui_total": 793.897,
+        "ui_route": 791.371,
+        "analyzer_http": 789.917,
+        "http_wait": 619.736,
+        "analyze_request": 170.181,
+        "claim_analysis": 167.922,
+        "archetype_reasoning": 97.925,
+        "context_builder": 68.558,
+        "policy_extraction": 67.076,
+        "retrieval": 0.044,
+        "llm_inference": 0.03,
+        "save_result": 0.071
+      },
+      "url": "http://127.0.0.1:16686/trace/557390ac4a4b2323329f145b139754d6"
+    },
+    {
+      "trace_id": "93b84623af877ee2247cb830e0625ad7",
+      "total_ms": 793.7,
+      "spans": {
+        "ui_total": 793.711,
+        "ui_route": 791.028,
+        "analyzer_http": 789.595,
+        "http_wait": 700.474,
+        "analyze_request": 89.121,
+        "claim_analysis": 87.138,
+        "archetype_reasoning": 58.474,
+        "context_builder": 26.187,
+        "policy_extraction": 25.265,
+        "retrieval": 0.028,
+        "llm_inference": 0.047,
+        "save_result": 0.085
+      },
+      "url": "http://127.0.0.1:16686/trace/93b84623af877ee2247cb830e0625ad7"
+    },
+    {
+      "trace_id": "10efc4868b2ee1648123fa359fcfc32b",
+      "total_ms": 791.8,
+      "spans": {
+        "ui_total": 791.791,
+        "ui_route": 787.291,
+        "analyzer_http": 786.031,
+        "http_wait": 664.836,
+        "analyze_request": 121.195,
+        "claim_analysis": 116.248,
+        "archetype_reasoning": 55.177,
+        "context_builder": 59.188,
+        "policy_extraction": 58.036,
+        "retrieval": 0.022,
+        "llm_inference": 0.05,
+        "save_result": 0.131
+      },
+      "url": "http://127.0.0.1:16686/trace/10efc4868b2ee1648123fa359fcfc32b"
+    }
+  ],
+  "fast_median_spans_ms": {
+    "ui_total": 148.4,
+    "ui_route": 145.3,
+    "analyzer_http": 144.1,
+    "http_wait": 47.5,
+    "analyze_request": 92.9,
+    "claim_analysis": 90.7,
+    "archetype_reasoning": 22.6,
+    "context_builder": 27.0,
+    "policy_extraction": 25.2,
+    "retrieval": 0.0,
+    "llm_inference": 0.0,
+    "save_result": 0.0
+  },
+  "slow_median_spans_ms": {
+    "ui_total": 793.7,
+    "ui_route": 791.0,
+    "analyzer_http": 789.6,
+    "http_wait": 664.8,
+    "analyze_request": 121.2,
+    "claim_analysis": 116.2,
+    "archetype_reasoning": 58.5,
+    "context_builder": 59.2,
+    "policy_extraction": 58.0,
+    "retrieval": 0.0,
+    "llm_inference": 0.0,
+    "save_result": 0.1
+  },
+  "experiment": "A",
+  "stamp": "20260622-092152",
+  "start_us": 1782138225261608,
+  "end_us": 1782138837079408
+}
