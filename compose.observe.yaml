@@ -9,6 +9,8 @@ services:
       - "9090:9090"
     volumes:
       - ./observe/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observe/prometheus/cxr_recording_rules.yml:/etc/prometheus/cxr_recording_rules.yml:ro
+      - ./observe/prometheus/analyzer_targets.json:/etc/prometheus/analyzer_targets.json:ro
       - prometheus_data:/prometheus
     networks:
       - cxr_observe
@@ -50,6 +52,16 @@ services:
       - ./observe/otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
     depends_on:
       - jaeger
+    networks:
+      - cxr_observe
+
+  # PROF-001 — optional; ./scripts/24-pyroscope-up.sh up
+  pyroscope:
+    image: grafana/pyroscope:1.7.1
+    profiles: ["pyroscope"]
+    restart: unless-stopped
+    ports:
+      - "4040:4040"
     networks:
       - cxr_observe
 

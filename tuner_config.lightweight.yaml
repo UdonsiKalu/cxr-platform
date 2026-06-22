@@ -1,0 +1,43 @@
+# GATE-002 — LIGHTWEIGHT baseline (saved 2026-06-19).
+# Mixed Claim Studio traffic: 75% GET /claim-studio, 25% POST analyze.
+# Good for realistic UI+app load; NOT comparable to OBS-001 analyzer saturation.
+#
+# Run: CXR_TUNER_CONFIG=tuner_config.lightweight.yaml ./scripts/k8-load-tuner.sh
+
+load_target:
+  mode: cumulative_ramp
+  profile: lightweight_mixed
+  ramp_start: 25
+  ramp_step: 25
+  ramp_max: 200
+  stage_time: 90s
+  hold_at_max: 2m
+  spawn_rate: 5
+  score_checkpoints: [25, 50, 75, 100, 125, 150, 175, 200]
+
+slos:
+  max_collapses: 0
+  max_failures_per_s: 0.5
+  max_p95_ms:
+    25: 2000
+    50: 2500
+    75: 3000
+    100: 3500
+    125: 4000
+    150: 5000
+    175: 5500
+    200: 6500
+
+search:
+  analyzer:
+    autoscaling.maxReplicas: [6, 8, 10]
+    autoscaling.minReplicas: [1, 2]
+    autoscaling.keda.prometheus.p95ThresholdMs: [2000]
+  ui:
+    autoscaling.maxReplicas: [4, 5]
+
+score:
+  collapse_weight: 1000
+  failure_weight: 100
+  p95_weight: 1
+  rps_bonus: 10

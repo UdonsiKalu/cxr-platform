@@ -1,0 +1,663 @@
+==> PERF-008 experiment a @ 20260621-174522
+==> faiss_gpu1: prometheus-client (deps already in venv for local analyzer)
+
+[notice] A new release of pip is available: 26.1.1 -> 26.1.2
+[notice] To update, run: /home/udonsi-kalu/staging/cxrlabs/faiss_gpu1/bin/python -m pip install --upgrade pip
+==> Layer analyzer image (CPU cxr-analyzer:perf003 base — no GPU in K8 image)
+Layer build cxr-analyzer:perf003 from cxr-analyzer:perf003 (prometheus-client + analyzer_metrics only)...
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.analyzer.perf008-layer
+#1 transferring dockerfile: 495B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/cxr-analyzer:perf003
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 133B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/cxr-analyzer:perf003@sha256:5ad37c5abc70e30caecbca909fdbd99a10d2af1a75ca91bcf9703ef6a08c82fe
+#4 resolve docker.io/library/cxr-analyzer:perf003@sha256:5ad37c5abc70e30caecbca909fdbd99a10d2af1a75ca91bcf9703ef6a08c82fe 0.0s done
+#4 ...
+
+#5 [internal] load build context
+#5 transferring context: 84B 0.0s done
+#5 DONE 0.1s
+
+#4 [1/4] FROM docker.io/library/cxr-analyzer:perf003@sha256:5ad37c5abc70e30caecbca909fdbd99a10d2af1a75ca91bcf9703ef6a08c82fe
+#4 DONE 0.5s
+
+#6 [2/4] WORKDIR /app
+#6 DONE 0.1s
+
+#7 [3/4] COPY analyzer_metrics.py analyzer_service_app.py /app/
+#7 DONE 0.1s
+
+#8 [4/4] RUN pip install --no-cache-dir 'prometheus-client>=0.20.0'
+#8 0.955 Requirement already satisfied: prometheus-client>=0.20.0 in /usr/local/lib/python3.11/site-packages (0.25.0)
+#8 1.883 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#8 2.169 
+#8 2.169 [notice] A new release of pip is available: 24.0 -> 26.1.2
+#8 2.169 [notice] To update, run: pip install --upgrade pip
+#8 DONE 2.3s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 0.2s done
+#9 exporting manifest sha256:dcc5cf34430047823168a1daed96fc4c5f2ba46e9d14736361608ae009307c79 0.0s done
+#9 exporting config sha256:89804ceadbe274b4cf124da7b892023f9e122e51766e7408af18a135ae473d6d 0.0s done
+#9 exporting attestation manifest sha256:bd09cfe55f0b2821308bb5adb56515a53371298e966db618f3065b87c6aaddfb 0.0s done
+#9 exporting manifest list sha256:5c077a49670ae24a5f4f351e9b85223717a7f7f6aacc6b1e34df910b3e33977a
+#9 exporting manifest list sha256:5c077a49670ae24a5f4f351e9b85223717a7f7f6aacc6b1e34df910b3e33977a 0.0s done
+#9 naming to docker.io/library/cxr-analyzer:perf003 done
+#9 unpacking to docker.io/library/cxr-analyzer:perf003 0.1s done
+#9 DONE 0.7s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/znbtjb8og4b8dunlqt4jv2sxn
+Built cxr-analyzer:perf003 (CPU image — same as perf003 base, no GPU in container)
+==> Helm upgrade (KEDA trigger overlay)
+W0621 17:45:29.800126 3681375 warnings.go:70] PollingInterval is configured but is not relevant. PollingInterval is only relevant when minReplicaCount = 0 or idleReplicaCount = 0 or useCachedMetrics is enabled
+W0621 17:45:29.800209 3681375 warnings.go:70] CooldownPeriod is configured but is not relevant. CooldownPeriod is only relevant when minReplicaCount = 0 or idleReplicaCount = 0
+Release "cxr-analyzer" has been upgraded. Happy Helming!
+NAME: cxr-analyzer
+LAST DEPLOYED: Sun Jun 21 17:45:28 2026
+NAMESPACE: cxr-ui
+STATUS: deployed
+REVISION: 40
+TEST SUITE: None
+==> Rollout restart analyzer (same tag, new image layers)
+deployment.apps/cxr-analyzer restarted
+Waiting for deployment "cxr-analyzer" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "cxr-analyzer" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "cxr-analyzer" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "cxr-analyzer" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "cxr-analyzer" rollout to finish: 1 old replicas are pending termination...
+deployment "cxr-analyzer" successfully rolled out
+==> Observe stack
+Cluster: docker-desktop (docker-desktop)
+time="2026-06-21T17:47:23-05:00" level=warning msg="Found orphan containers ([cxr-ops-lab-filebeat-1 cxr-ops-lab-kibana-1 cxr-ops-lab-elasticsearch-1 cxr-ops-lab-kafka-ui-1 cxr-ops-lab-kafka-1 cxr-ops-lab-zookeeper-1 cxr-ops-lab-qdrant-1 cxr-ops-lab-cxr-ui-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+ Container cxr-ops-lab-jaeger-1  Running
+ Container cxr-ops-lab-prometheus-1  Running
+ Container cxr-ops-lab-otel-collector-1  Running
+ Container cxr-ops-lab-grafana-1  Running
+Prometheus http://localhost:9090
+Grafana    http://localhost:3001 (admin / see GF_SECURITY_ADMIN_PASSWORD in compose.observe.yaml)
+Jaeger UI  http://localhost:16686  (SW.11 traces)
+OTel HTTP  http://localhost:4318  (apps send OTLP here)
+
+Rehearsal with traces:
+  export OTEL_EXPORTER_OTLP_ENDPOINT=http://127.0.0.1:4318
+  export OTEL_SERVICE_NAME=cxr-ui-rehearsal
+  cd ../cxr-ui-prune-rehearsal/cxr-ui && npm run dev:rehearsal
+See .env.otel.example and docs/CXR-OTEL-LAB-MANUAL.md
+metrics-server already installed
+deployment.apps/metrics-server patched
+Waiting for deployment "metrics-server" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "metrics-server" rollout to finish: 1 old replicas are pending termination...
+deployment "metrics-server" successfully rolled out
+metrics-server ready — kubectl top nodes
+kube-state-metrics already installed in kube-system
+deployment "kube-state-metrics" successfully rolled out
+kube-state-metrics ready — scrape via scripts/k8-ksm-port-forward.sh
+Starting kube-state-metrics forward :9091 → kube-system/kube-state-metrics:8080
+KSM metrics ready: http://127.0.0.1:9091/metrics (log: /tmp/cxr-k8-ksm-forward-9091.log)
+Starting cxr-load-exporter on :9102 (locust=http://127.0.0.1:8092)
+cxr-load-exporter ready: http://127.0.0.1:9102/metrics (log: /tmp/cxr-load-exporter-9102.log)
+Analyzer metrics forward: http://127.0.0.1:8767/metrics (log: /tmp/cxr-k8-analyzer-metrics-forward.log)
+
+== CXR K8 load observe stack ==
+  Grafana LOAD-003:    http://127.0.0.1:3001/d/cxr-hpa-load-003
+  Prometheus targets:  http://127.0.0.1:9090/targets
+  Jaeger (traces):     http://127.0.0.1:16686  → service cxr-analyzer-service
+  Load exporter:       http://127.0.0.1:9102/metrics
+  Analyzer metrics:    http://127.0.0.1:8767/metrics  (port-forward)
+  KSM metrics:         http://127.0.0.1:9091/metrics
+
+Verify targets cxr-load-exporter + kube-state-metrics + cxr-analyzer are UP, then run Locust :8092.
+Runbook: docs/K8-LOAD-OBSERVE-RUNBOOK.md
+==> Verify analyzer /metrics
+WARN: analyzer metrics scrape not ready — check k8-analyzer-metrics-forward.sh
+==> Cumulative load (GATE-002 comparable profile — gate script unchanged)
+== GATE-001 preflight ==
+cxr-load-exporter up: http://127.0.0.1:9102/metrics
+  mode=cumulative  profile=analyzer_saturation  ramp=15+5→200  tier=60s  hold=3m
+  namespace=cxr-ui  host=http://127.0.0.1:8081
+
+== Cumulative ramp [analyzer_saturation]: 15 +5 → 200 (60s/tier, 180s@max, ~2460s total) ==
+Collecting every 5.0s → /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-174522/gate-20260621-174755-cumulative.csv
+  namespace=cxr-ui  locust=http://127.0.0.1:8092
+  Ctrl+C to stop
+  t=     0s  users=  15  rps=  0.0  an=2/1%  ui=1/10%  pending=0
+== CXR Locust cumulative ramp [analyzer_saturation] (web :8092) ==
+  Target: http://127.0.0.1:8081
+  Ramp:   15 +5 → 200
+  Tier:   60s  hold@max: 180s
+  Run:    2460s
+[2026-06-21 17:48:00,167] mail/INFO/locust.main: Starting Locust 2.44.0
+[2026-06-21 17:48:00,167] mail/WARNING/locust.main: --run-time, --users or --spawn-rate have no impact on LoadShapes unless the shape class explicitly reads them. See: docs.locust.io/en/stable/custom-load-shape.html#use-common-options
+[2026-06-21 17:48:00,167] mail/WARNING/locust.main: The following option(s) will be ignored: --run-time
+[2026-06-21 17:48:00,167] mail/INFO/locust.main: Starting web interface at http://127.0.0.1:8092, press enter to open your default browser.
+[2026-06-21 17:48:00,181] mail/INFO/locust.runners: Shape test starting.
+[2026-06-21 17:48:00,186] mail/INFO/locust.runners: Shape worker starting
+[2026-06-21 17:48:00,186] mail/INFO/locust.runners: Shape test updating to 15 users at 2.00 spawn rate
+[2026-06-21 17:48:00,187] mail/INFO/locust.runners: Ramping to 15 users at a rate of 2.00 per second
+  t=     7s  users=   8  rps=  0.0  an=2/1%  ui=1/8%  pending=0
+[2026-06-21 17:48:07,194] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 5, "ClaimStudioMixedUser": 5, "ClaimStudioUser": 5} (15 total users)
+  t=    14s  users=  15  rps=  5.4  an=2/2%  ui=1/8%  pending=0
+  t=    20s  users=  15  rps=  8.6  an=2/2%  ui=1/112%  pending=0
+  t=    27s  users=  15  rps=  8.5  an=2/2%  ui=1/112%  pending=0
+  t=    34s  users=  15  rps=  8.6  an=2/22%  ui=1/112%  pending=0
+  t=    41s  users=  15  rps=  8.1  an=2/22%  ui=1/112%  pending=0
+  t=    47s  users=  15  rps=  9.0  an=2/25%  ui=2/162%  pending=0
+  t=    54s  users=  15  rps=  8.7  an=2/25%  ui=2/162%  pending=0
+[2026-06-21 17:49:00,236] mail/INFO/locust.runners: Shape test updating to 20 users at 2.00 spawn rate
+[2026-06-21 17:49:00,236] mail/INFO/locust.runners: Ramping to 20 users at a rate of 2.00 per second
+  t=    61s  users=  15  rps=  8.0  an=2/24%  ui=2/162%  pending=0
+[2026-06-21 17:49:02,239] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 7, "ClaimStudioMixedUser": 7, "ClaimStudioUser": 6} (20 total users)
+  t=    68s  users=  20  rps=  8.7  an=2/24%  ui=2/182%  pending=0
+  t=    75s  users=  20  rps= 10.4  an=2/23%  ui=2/182%  pending=0
+  t=    81s  users=  20  rps= 11.0  an=2/23%  ui=3/189%  pending=0
+  t=    88s  users=  20  rps= 11.3  an=2/23%  ui=3/189%  pending=0
+  t=    95s  users=  20  rps= 11.0  an=2/30%  ui=3/127%  pending=0
+  t=   102s  users=  20  rps= 11.5  an=2/30%  ui=3/127%  pending=0
+  t=   108s  users=  20  rps= 11.6  an=2/30%  ui=3/109%  pending=0
+  t=   115s  users=  20  rps= 11.2  an=2/30%  ui=3/109%  pending=0
+[2026-06-21 17:50:00,286] mail/INFO/locust.runners: Shape test updating to 25 users at 2.00 spawn rate
+[2026-06-21 17:50:00,288] mail/INFO/locust.runners: Ramping to 25 users at a rate of 2.00 per second
+  t=   122s  users=  20  rps= 10.7  an=2/33%  ui=3/109%  pending=0
+[2026-06-21 17:50:02,291] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 9, "ClaimStudioMixedUser": 8, "ClaimStudioUser": 8} (25 total users)
+  t=   129s  users=  25  rps= 12.1  an=2/33%  ui=3/81%  pending=0
+  t=   136s  users=  25  rps= 13.9  an=2/34%  ui=3/81%  pending=0
+  t=   142s  users=  25  rps= 14.0  an=2/34%  ui=3/73%  pending=0
+  t=   149s  users=  25  rps= 13.9  an=2/41%  ui=3/73%  pending=0
+  t=   156s  users=  25  rps= 13.7  an=2/41%  ui=3/86%  pending=0
+  t=   163s  users=  25  rps= 13.1  an=2/41%  ui=3/86%  pending=0
+  t=   169s  users=  25  rps= 13.5  an=2/39%  ui=3/93%  pending=0
+  t=   176s  users=  25  rps= 13.9  an=2/39%  ui=3/93%  pending=0
+[2026-06-21 17:51:00,330] mail/INFO/locust.runners: Shape test updating to 30 users at 2.00 spawn rate
+[2026-06-21 17:51:00,332] mail/INFO/locust.runners: Ramping to 30 users at a rate of 2.00 per second
+[2026-06-21 17:51:02,336] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 10, "ClaimStudioMixedUser": 10, "ClaimStudioUser": 10} (30 total users)
+  t=   183s  users=  25  rps= 14.0  an=2/42%  ui=4/88%  pending=0
+  t=   190s  users=  30  rps= 15.2  an=2/42%  ui=4/88%  pending=0
+  t=   196s  users=  30  rps= 16.5  an=2/43%  ui=4/88%  pending=0
+  t=   203s  users=  30  rps= 16.3  an=2/43%  ui=4/87%  pending=0
+  t=   210s  users=  30  rps= 16.0  an=2/54%  ui=4/87%  pending=0
+  t=   217s  users=  30  rps= 16.6  an=2/54%  ui=4/90%  pending=0
+  t=   223s  users=  30  rps= 17.0  an=2/54%  ui=4/90%  pending=0
+  t=   230s  users=  30  rps= 16.2  an=2/50%  ui=4/84%  pending=0
+  t=   237s  users=  30  rps= 16.4  an=2/50%  ui=4/84%  pending=0
+[2026-06-21 17:52:00,375] mail/INFO/locust.runners: Shape test updating to 35 users at 2.00 spawn rate
+[2026-06-21 17:52:00,376] mail/INFO/locust.runners: Ramping to 35 users at a rate of 2.00 per second
+[2026-06-21 17:52:02,380] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 12, "ClaimStudioMixedUser": 12, "ClaimStudioUser": 11} (35 total users)
+  t=   244s  users=  32  rps= 16.1  an=2/48%  ui=4/74%  pending=0
+  t=   251s  users=  35  rps= 17.7  an=2/48%  ui=4/74%  pending=0
+  t=   257s  users=  35  rps= 19.5  an=2/51%  ui=4/74%  pending=0
+  t=   264s  users=  35  rps= 18.9  an=2/51%  ui=4/74%  pending=0
+  t=   271s  users=  35  rps= 19.5  an=2/54%  ui=4/74%  pending=0
+  t=   277s  users=  35  rps= 18.9  an=2/54%  ui=4/84%  pending=0
+  t=   284s  users=  35  rps= 19.0  an=2/58%  ui=4/84%  pending=0
+  t=   291s  users=  35  rps= 19.0  an=2/58%  ui=4/86%  pending=0
+  t=   298s  users=  35  rps= 19.0  an=2/58%  ui=4/86%  pending=0
+[2026-06-21 17:53:00,422] mail/INFO/locust.runners: Shape test updating to 40 users at 2.00 spawn rate
+[2026-06-21 17:53:00,423] mail/INFO/locust.runners: Ramping to 40 users at a rate of 2.00 per second
+[2026-06-21 17:53:02,426] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 14, "ClaimStudioMixedUser": 13, "ClaimStudioUser": 13} (40 total users)
+  t=   304s  users=  37  rps= 19.4  an=2/57%  ui=4/78%  pending=0
+  t=   311s  users=  40  rps= 21.1  an=2/57%  ui=4/78%  pending=0
+  t=   318s  users=  40  rps= 22.1  an=2/59%  ui=4/84%  pending=0
+  t=   325s  users=  40  rps= 22.7  an=2/59%  ui=4/84%  pending=0
+  t=   332s  users=  40  rps= 22.8  an=2/63%  ui=4/84%  pending=0
+  t=   339s  users=  40  rps= 22.5  an=2/63%  ui=1/355%  pending=0
+  t=   346s  users=  40  rps= 22.1  an=2/68%  ui=1/355%  pending=0
+  t=   352s  users=  40  rps= 22.3  an=2/68%  ui=4/324%  pending=0
+  t=   359s  users=  40  rps= 22.3  an=2/65%  ui=4/324%  pending=0
+[2026-06-21 17:54:00,464] mail/INFO/locust.runners: Shape test updating to 45 users at 2.00 spawn rate
+[2026-06-21 17:54:00,465] mail/INFO/locust.runners: Ramping to 45 users at a rate of 2.00 per second
+[2026-06-21 17:54:02,468] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 15, "ClaimStudioMixedUser": 15, "ClaimStudioUser": 15} (45 total users)
+  t=   366s  users=  44  rps= 22.8  an=2/65%  ui=5/331%  pending=0
+  t=   373s  users=  45  rps= 24.0  an=2/65%  ui=5/331%  pending=0
+  t=   380s  users=  45  rps= 24.9  an=2/70%  ui=5/338%  pending=0
+  t=   386s  users=  45  rps= 24.4  an=2/70%  ui=5/338%  pending=0
+  t=   393s  users=  45  rps= 25.0  an=2/73%  ui=5/130%  pending=0
+  t=   400s  users=  45  rps= 25.0  an=2/73%  ui=5/130%  pending=0
+  t=   407s  users=  45  rps= 24.6  an=2/76%  ui=5/130%  pending=0
+  t=   414s  users=  45  rps= 24.8  an=2/76%  ui=5/80%  pending=0
+  t=   420s  users=  45  rps= 24.7  an=2/75%  ui=5/80%  pending=0
+[2026-06-21 17:55:00,507] mail/INFO/locust.runners: Shape test updating to 50 users at 2.00 spawn rate
+[2026-06-21 17:55:00,508] mail/INFO/locust.runners: Ramping to 50 users at a rate of 2.00 per second
+[2026-06-21 17:55:02,512] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 17, "ClaimStudioMixedUser": 17, "ClaimStudioUser": 16} (50 total users)
+  t=   427s  users=  50  rps= 24.8  an=2/75%  ui=5/75%  pending=0
+  t=   434s  users=  50  rps= 26.5  an=2/79%  ui=5/75%  pending=0
+  t=   441s  users=  50  rps= 27.5  an=2/79%  ui=5/79%  pending=0
+  t=   447s  users=  50  rps= 27.0  an=2/79%  ui=5/79%  pending=0
+  t=   454s  users=  50  rps= 26.7  an=2/78%  ui=5/83%  pending=0
+  t=   461s  users=  50  rps= 27.2  an=2/78%  ui=5/83%  pending=0
+  t=   468s  users=  50  rps= 26.6  an=2/157%  ui=5/83%  pending=0
+  t=   475s  users=  50  rps= 27.3  an=2/157%  ui=5/82%  pending=0
+[2026-06-21 17:56:00,547] mail/INFO/locust.runners: Shape test updating to 55 users at 2.00 spawn rate
+[2026-06-21 17:56:00,548] mail/INFO/locust.runners: Ramping to 55 users at a rate of 2.00 per second
+  t=   481s  users=  50  rps= 27.1  an=3/57%  ui=5/82%  pending=0
+[2026-06-21 17:56:02,551] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 19, "ClaimStudioMixedUser": 18, "ClaimStudioUser": 18} (55 total users)
+  t=   488s  users=  55  rps= 28.1  an=3/57%  ui=5/81%  pending=0
+  t=   495s  users=  55  rps= 29.6  an=3/58%  ui=5/81%  pending=0
+  t=   502s  users=  55  rps= 30.7  an=3/58%  ui=5/84%  pending=0
+  t=   508s  users=  55  rps= 30.4  an=3/58%  ui=5/84%  pending=0
+  t=   515s  users=  55  rps= 30.7  an=3/61%  ui=5/87%  pending=0
+  t=   522s  users=  55  rps= 29.6  an=3/61%  ui=5/87%  pending=0
+  t=   529s  users=  55  rps= 29.3  an=3/65%  ui=5/90%  pending=0
+  t=   535s  users=  55  rps= 30.4  an=3/65%  ui=5/90%  pending=0
+[2026-06-21 17:57:00,589] mail/INFO/locust.runners: Shape test updating to 60 users at 2.00 spawn rate
+[2026-06-21 17:57:00,590] mail/INFO/locust.runners: Ramping to 60 users at a rate of 2.00 per second
+  t=   542s  users=  55  rps= 30.1  an=3/60%  ui=5/90%  pending=0
+[2026-06-21 17:57:02,595] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 20, "ClaimStudioMixedUser": 20, "ClaimStudioUser": 20} (60 total users)
+  t=   549s  users=  60  rps= 31.1  an=3/60%  ui=5/87%  pending=0
+  t=   556s  users=  60  rps= 32.7  an=3/62%  ui=5/87%  pending=0
+  t=   562s  users=  60  rps= 33.0  an=3/62%  ui=5/94%  pending=0
+  t=   569s  users=  60  rps= 32.5  an=3/68%  ui=5/94%  pending=0
+  t=   576s  users=  60  rps= 32.9  an=3/68%  ui=5/97%  pending=0
+  t=   583s  users=  60  rps= 32.5  an=3/68%  ui=5/97%  pending=0
+  t=   590s  users=  60  rps= 32.7  an=3/64%  ui=5/97%  pending=0
+  t=   597s  users=  60  rps= 31.5  an=3/64%  ui=5/97%  pending=0
+[2026-06-21 17:58:00,631] mail/INFO/locust.runners: Shape test updating to 65 users at 2.00 spawn rate
+[2026-06-21 17:58:00,632] mail/INFO/locust.runners: Ramping to 65 users at a rate of 2.00 per second
+[2026-06-21 17:58:02,638] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 22, "ClaimStudioMixedUser": 22, "ClaimStudioUser": 21} (65 total users)
+  t=   603s  users=  60  rps= 32.0  an=3/66%  ui=5/100%  pending=0
+  t=   610s  users=  65  rps= 33.6  an=3/66%  ui=5/100%  pending=0
+  t=   617s  users=  65  rps= 35.4  an=3/66%  ui=5/100%  pending=0
+  t=   624s  users=  65  rps= 35.0  an=3/66%  ui=5/96%  pending=0
+  t=   630s  users=  65  rps= 34.6  an=3/68%  ui=5/96%  pending=0
+  t=   637s  users=  65  rps= 34.8  an=3/68%  ui=1/463%  pending=0
+  t=   644s  users=  65  rps= 34.1  an=3/72%  ui=1/463%  pending=0
+  t=   651s  users=  65  rps= 35.6  an=3/72%  ui=4/460%  pending=0
+  t=   658s  users=  65  rps= 35.5  an=3/72%  ui=4/460%  pending=0
+[2026-06-21 17:59:00,674] mail/INFO/locust.runners: Shape test updating to 70 users at 2.00 spawn rate
+[2026-06-21 17:59:00,675] mail/INFO/locust.runners: Ramping to 70 users at a rate of 2.00 per second
+[2026-06-21 17:59:02,678] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 24, "ClaimStudioMixedUser": 23, "ClaimStudioUser": 23} (70 total users)
+  t=   664s  users=  67  rps= 34.8  an=3/72%  ui=5/488%  pending=0
+  t=   671s  users=  70  rps= 36.9  an=3/72%  ui=5/488%  pending=0
+  t=   678s  users=  70  rps= 37.7  an=3/76%  ui=5/488%  pending=0
+  t=   685s  users=  70  rps= 37.7  an=3/76%  ui=5/499%  pending=0
+  t=   692s  users=  70  rps= 39.1  an=3/79%  ui=5/499%  pending=0
+  t=   698s  users=  70  rps= 37.4  an=3/79%  ui=5/130%  pending=0
+  t=   705s  users=  70  rps= 37.1  an=3/80%  ui=5/130%  pending=0
+  t=   712s  users=  70  rps= 37.4  an=3/80%  ui=5/111%  pending=0
+  t=   718s  users=  70  rps= 37.8  an=3/80%  ui=5/111%  pending=0
+[2026-06-21 18:00:00,720] mail/INFO/locust.runners: Shape test updating to 75 users at 2.00 spawn rate
+[2026-06-21 18:00:00,721] mail/INFO/locust.runners: Ramping to 75 users at a rate of 2.00 per second
+[2026-06-21 18:00:02,723] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 25, "ClaimStudioMixedUser": 25, "ClaimStudioUser": 25} (75 total users)
+  t=   725s  users=  72  rps= 38.8  an=3/119%  ui=5/103%  pending=0
+  t=   732s  users=  75  rps= 40.2  an=3/119%  ui=5/103%  pending=0
+  t=   739s  users=  75  rps= 40.3  an=3/76%  ui=5/101%  pending=0
+  t=   746s  users=  75  rps= 40.2  an=4/57%  ui=5/101%  pending=0
+  t=   752s  users=  75  rps= 41.5  an=4/62%  ui=5/101%  pending=0
+  t=   759s  users=  75  rps= 40.4  an=4/62%  ui=5/117%  pending=0
+  t=   766s  users=  75  rps= 39.8  an=4/64%  ui=5/117%  pending=0
+  t=   772s  users=  75  rps= 40.0  an=4/64%  ui=5/120%  pending=0
+  t=   779s  users=  75  rps= 41.9  an=4/64%  ui=5/120%  pending=0
+[2026-06-21 18:01:00,762] mail/INFO/locust.runners: Shape test updating to 80 users at 2.00 spawn rate
+[2026-06-21 18:01:00,763] mail/INFO/locust.runners: Ramping to 80 users at a rate of 2.00 per second
+[2026-06-21 18:01:02,767] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 27, "ClaimStudioMixedUser": 27, "ClaimStudioUser": 26} (80 total users)
+  t=   786s  users=  79  rps= 40.0  an=4/64%  ui=5/111%  pending=0
+  t=   793s  users=  80  rps= 42.8  an=4/64%  ui=5/111%  pending=0
+  t=   799s  users=  80  rps= 43.7  an=4/65%  ui=5/111%  pending=0
+  t=   806s  users=  80  rps= 43.1  an=4/65%  ui=5/111%  pending=0
+  t=   813s  users=  80  rps= 42.8  an=4/67%  ui=5/111%  pending=0
+  t=   820s  users=  80  rps= 43.4  an=4/67%  ui=5/111%  pending=0
+  t=   826s  users=  80  rps= 44.7  an=4/67%  ui=5/111%  pending=0
+  t=   833s  users=  80  rps= 43.5  an=4/67%  ui=5/119%  pending=0
+  t=   840s  users=  80  rps= 41.9  an=4/66%  ui=5/119%  pending=0
+[2026-06-21 18:02:00,810] mail/INFO/locust.runners: Shape test updating to 85 users at 2.00 spawn rate
+[2026-06-21 18:02:00,812] mail/INFO/locust.runners: Ramping to 85 users at a rate of 2.00 per second
+[2026-06-21 18:02:02,816] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 29, "ClaimStudioMixedUser": 28, "ClaimStudioUser": 28} (85 total users)
+  t=   847s  users=  85  rps= 43.8  an=4/66%  ui=5/111%  pending=0
+  t=   853s  users=  85  rps= 45.2  an=4/66%  ui=5/111%  pending=0
+  t=   860s  users=  85  rps= 45.5  an=4/68%  ui=5/118%  pending=0
+  t=   867s  users=  85  rps= 45.4  an=4/68%  ui=5/118%  pending=0
+  t=   874s  users=  85  rps= 45.2  an=4/68%  ui=5/118%  pending=0
+  t=   880s  users=  85  rps= 46.3  an=4/68%  ui=5/116%  pending=0
+  t=   887s  users=  85  rps= 46.6  an=4/71%  ui=5/116%  pending=0
+  t=   894s  users=  85  rps= 44.5  an=4/71%  ui=5/123%  pending=0
+  t=   901s  users=  85  rps= 45.4  an=4/71%  ui=5/123%  pending=0
+[2026-06-21 18:03:00,858] mail/INFO/locust.runners: Shape test updating to 90 users at 2.00 spawn rate
+[2026-06-21 18:03:00,858] mail/INFO/locust.runners: Ramping to 90 users at a rate of 2.00 per second
+[2026-06-21 18:03:02,862] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 30, "ClaimStudioMixedUser": 30, "ClaimStudioUser": 30} (90 total users)
+  t=   908s  users=  90  rps= 45.5  an=4/71%  ui=5/131%  pending=0
+  t=   914s  users=  90  rps= 46.5  an=4/71%  ui=5/131%  pending=0
+  t=   921s  users=  90  rps= 47.8  an=4/71%  ui=1/598%  pending=0
+  t=   928s  users=  90  rps= 47.5  an=4/71%  ui=1/598%  pending=0
+  t=   935s  users=  90  rps= 48.9  an=4/75%  ui=4/593%  pending=0
+  t=   941s  users=  90  rps= 48.8  an=4/75%  ui=4/593%  pending=0
+  t=   948s  users=  90  rps= 49.2  an=4/72%  ui=4/593%  pending=0
+  t=   955s  users=  90  rps= 47.8  an=4/72%  ui=5/603%  pending=0
+[2026-06-21 18:04:00,897] mail/INFO/locust.runners: Shape test updating to 95 users at 2.00 spawn rate
+[2026-06-21 18:04:00,898] mail/INFO/locust.runners: Ramping to 95 users at a rate of 2.00 per second
+  t=   962s  users=  90  rps= 48.6  an=4/76%  ui=5/603%  pending=0
+[2026-06-21 18:04:02,904] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 32, "ClaimStudioMixedUser": 32, "ClaimStudioUser": 31} (95 total users)
+  t=   968s  users=  95  rps= 48.4  an=4/76%  ui=5/596%  pending=0
+  t=   975s  users=  95  rps= 48.7  an=4/76%  ui=5/596%  pending=0
+  t=   982s  users=  95  rps= 49.2  an=4/76%  ui=5/179%  pending=0
+  t=   989s  users=  95  rps= 48.7  an=4/78%  ui=5/179%  pending=0
+  t=   996s  users=  95  rps= 51.8  an=4/78%  ui=5/134%  pending=0
+  t=  1002s  users=  95  rps= 50.6  an=4/78%  ui=5/134%  pending=1
+  t=  1009s  users=  95  rps= 51.9  an=4/79%  ui=5/126%  pending=0
+  t=  1016s  users=  95  rps= 49.9  an=4/79%  ui=5/126%  pending=0
+[2026-06-21 18:05:00,946] mail/INFO/locust.runners: Shape test updating to 100 users at 2.00 spawn rate
+[2026-06-21 18:05:00,947] mail/INFO/locust.runners: Ramping to 100 users at a rate of 2.00 per second
+  t=  1023s  users=  95  rps= 48.7  an=4/113%  ui=5/126%  pending=0
+[2026-06-21 18:05:02,951] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 34, "ClaimStudioMixedUser": 33, "ClaimStudioUser": 33} (100 total users)
+  t=  1029s  users= 100  rps= 50.3  an=4/113%  ui=5/130%  pending=0
+  t=  1036s  users= 100  rps= 53.1  an=5/68%  ui=5/130%  pending=0
+  t=  1043s  users= 100  rps= 51.7  an=5/68%  ui=5/138%  pending=0
+  t=  1050s  users= 100  rps= 53.5  an=5/68%  ui=5/138%  pending=0
+  t=  1056s  users= 100  rps= 49.9  an=5/68%  ui=5/133%  pending=0
+  t=  1063s  users= 100  rps= 53.3  an=5/68%  ui=5/133%  pending=0
+  t=  1070s  users= 100  rps= 52.5  an=5/69%  ui=5/131%  pending=0
+  t=  1077s  users= 100  rps= 52.2  an=5/69%  ui=5/131%  pending=0
+[2026-06-21 18:06:00,993] mail/INFO/locust.runners: Shape test updating to 105 users at 2.00 spawn rate
+[2026-06-21 18:06:00,993] mail/INFO/locust.runners: Ramping to 105 users at a rate of 2.00 per second
+[2026-06-21 18:06:02,996] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 35, "ClaimStudioMixedUser": 35, "ClaimStudioUser": 35} (105 total users)
+  t=  1084s  users= 100  rps= 52.7  an=5/67%  ui=5/131%  pending=0
+  t=  1090s  users= 105  rps= 53.2  an=5/67%  ui=5/133%  pending=0
+  t=  1097s  users= 105  rps= 56.0  an=5/70%  ui=5/133%  pending=0
+  t=  1104s  users= 105  rps= 54.0  an=5/70%  ui=5/136%  pending=0
+  t=  1111s  users= 105  rps= 54.5  an=5/70%  ui=5/136%  pending=0
+  t=  1117s  users= 105  rps= 56.1  an=5/70%  ui=5/135%  pending=0
+  t=  1124s  users= 105  rps= 52.0  an=5/72%  ui=5/135%  pending=0
+  t=  1131s  users= 105  rps= 53.6  an=5/72%  ui=5/137%  pending=0
+  t=  1138s  users= 105  rps= 55.4  an=5/72%  ui=5/137%  pending=0
+[2026-06-21 18:07:01,038] mail/INFO/locust.runners: Shape test updating to 110 users at 2.00 spawn rate
+[2026-06-21 18:07:01,040] mail/INFO/locust.runners: Ramping to 110 users at a rate of 2.00 per second
+[2026-06-21 18:07:03,043] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 37, "ClaimStudioMixedUser": 37, "ClaimStudioUser": 36} (110 total users)
+  t=  1144s  users= 107  rps= 54.8  an=5/68%  ui=5/134%  pending=0
+  t=  1151s  users= 110  rps= 55.6  an=5/68%  ui=5/134%  pending=0
+  t=  1158s  users= 110  rps= 53.9  an=5/73%  ui=5/134%  pending=0
+  t=  1165s  users= 110  rps= 58.0  an=5/73%  ui=5/137%  pending=0
+  t=  1172s  users= 110  rps= 56.4  an=5/74%  ui=5/137%  pending=0
+  t=  1178s  users= 110  rps= 57.2  an=5/74%  ui=5/144%  pending=0
+  t=  1185s  users= 110  rps= 55.6  an=5/75%  ui=5/144%  pending=0
+  t=  1192s  users= 110  rps= 58.0  an=5/75%  ui=5/149%  pending=0
+  t=  1198s  users= 110  rps= 57.8  an=5/73%  ui=5/149%  pending=0
+[2026-06-21 18:08:01,091] mail/INFO/locust.runners: Shape test updating to 115 users at 2.00 spawn rate
+[2026-06-21 18:08:01,092] mail/INFO/locust.runners: Ramping to 115 users at a rate of 2.00 per second
+[2026-06-21 18:08:03,096] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 39, "ClaimStudioMixedUser": 38, "ClaimStudioUser": 38} (115 total users)
+  t=  1205s  users= 114  rps= 56.4  an=5/73%  ui=5/141%  pending=0
+  t=  1212s  users= 115  rps= 57.1  an=5/73%  ui=5/141%  pending=0
+  t=  1219s  users= 115  rps= 60.0  an=5/74%  ui=5/141%  pending=0
+  t=  1226s  users= 115  rps= 60.3  an=5/74%  ui=1/688%  pending=0
+  t=  1232s  users= 115  rps= 59.4  an=5/77%  ui=1/688%  pending=0
+  t=  1239s  users= 115  rps= 62.8  an=5/77%  ui=4/691%  pending=0
+  t=  1246s  users= 115  rps= 60.3  an=5/76%  ui=4/691%  pending=0
+  t=  1253s  users= 115  rps= 61.6  an=5/76%  ui=5/691%  pending=0
+  t=  1259s  users= 115  rps= 60.6  an=5/77%  ui=5/691%  pending=0
+[2026-06-21 18:09:01,144] mail/INFO/locust.runners: Shape test updating to 120 users at 2.00 spawn rate
+[2026-06-21 18:09:01,145] mail/INFO/locust.runners: Ramping to 120 users at a rate of 2.00 per second
+[2026-06-21 18:09:03,148] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 40, "ClaimStudioMixedUser": 40, "ClaimStudioUser": 40} (120 total users)
+  t=  1266s  users= 120  rps= 62.1  an=5/77%  ui=5/701%  pending=0
+  t=  1273s  users= 120  rps= 61.4  an=5/77%  ui=5/701%  pending=0
+  t=  1280s  users= 120  rps= 62.6  an=5/80%  ui=5/200%  pending=0
+  t=  1286s  users= 120  rps= 61.5  an=5/80%  ui=5/200%  pending=0
+  t=  1293s  users= 120  rps= 62.4  an=5/83%  ui=5/200%  pending=0
+  t=  1300s  users= 120  rps= 62.9  an=5/83%  ui=5/166%  pending=0
+  t=  1307s  users= 120  rps= 61.5  an=5/115%  ui=5/166%  pending=0
+  t=  1314s  users= 120  rps= 62.8  an=5/115%  ui=5/152%  pending=0
+  t=  1320s  users= 120  rps= 62.1  an=6/67%  ui=5/152%  pending=0
+[2026-06-21 18:10:00,186] mail/INFO/locust.runners: Shape test updating to 125 users at 2.00 spawn rate
+[2026-06-21 18:10:00,186] mail/INFO/locust.runners: Ramping to 125 users at a rate of 2.00 per second
+[2026-06-21 18:10:02,188] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 42, "ClaimStudioMixedUser": 42, "ClaimStudioUser": 41} (125 total users)
+  t=  1327s  users= 125  rps= 62.3  an=6/67%  ui=5/157%  pending=0
+  t=  1334s  users= 125  rps= 63.8  an=6/69%  ui=5/157%  pending=0
+  t=  1341s  users= 125  rps= 64.4  an=6/69%  ui=5/157%  pending=0
+  t=  1348s  users= 125  rps= 65.4  an=6/69%  ui=5/157%  pending=0
+  t=  1354s  users= 125  rps= 64.0  an=6/69%  ui=5/157%  pending=0
+  t=  1361s  users= 125  rps= 66.9  an=6/69%  ui=5/148%  pending=0
+  t=  1368s  users= 125  rps= 62.9  an=6/72%  ui=5/148%  pending=0
+  t=  1375s  users= 125  rps= 65.3  an=6/72%  ui=5/151%  pending=0
+[2026-06-21 18:11:00,229] mail/INFO/locust.runners: Shape test updating to 130 users at 2.00 spawn rate
+[2026-06-21 18:11:00,229] mail/INFO/locust.runners: Ramping to 130 users at a rate of 2.00 per second
+  t=  1381s  users= 125  rps= 64.0  an=6/68%  ui=5/151%  pending=0
+[2026-06-21 18:11:02,235] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 44, "ClaimStudioMixedUser": 43, "ClaimStudioUser": 43} (130 total users)
+  t=  1388s  users= 130  rps= 64.4  an=6/68%  ui=5/151%  pending=0
+  t=  1395s  users= 130  rps= 67.0  an=6/71%  ui=5/151%  pending=0
+  t=  1402s  users= 130  rps= 66.4  an=6/71%  ui=5/154%  pending=0
+  t=  1408s  users= 130  rps= 68.9  an=6/71%  ui=5/154%  pending=0
+  t=  1415s  users= 130  rps= 66.4  an=6/74%  ui=5/153%  pending=0
+  t=  1422s  users= 130  rps= 67.9  an=6/74%  ui=5/153%  pending=0
+  t=  1429s  users= 130  rps= 67.3  an=6/74%  ui=5/153%  pending=0
+  t=  1436s  users= 130  rps= 66.4  an=6/74%  ui=5/155%  pending=0
+[2026-06-21 18:12:00,275] mail/INFO/locust.runners: Shape test updating to 135 users at 2.00 spawn rate
+[2026-06-21 18:12:00,275] mail/INFO/locust.runners: Ramping to 135 users at a rate of 2.00 per second
+  t=  1442s  users= 130  rps= 66.3  an=6/73%  ui=5/155%  pending=0
+[2026-06-21 18:12:02,279] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 45, "ClaimStudioMixedUser": 45, "ClaimStudioUser": 45} (135 total users)
+  t=  1449s  users= 135  rps= 67.2  an=6/73%  ui=5/159%  pending=0
+  t=  1456s  users= 135  rps= 70.1  an=6/73%  ui=5/159%  pending=0
+  t=  1463s  users= 135  rps= 68.6  an=6/73%  ui=5/158%  pending=0
+  t=  1469s  users= 135  rps= 71.2  an=6/74%  ui=5/158%  pending=0
+  t=  1476s  users= 135  rps= 71.6  an=6/74%  ui=5/162%  pending=0
+  t=  1483s  users= 135  rps= 69.6  an=6/74%  ui=5/162%  pending=0
+  t=  1490s  users= 135  rps= 71.1  an=6/74%  ui=5/162%  pending=0
+  t=  1496s  users= 135  rps= 70.4  an=6/74%  ui=5/161%  pending=0
+[2026-06-21 18:13:00,323] mail/INFO/locust.runners: Shape test updating to 140 users at 2.00 spawn rate
+[2026-06-21 18:13:00,325] mail/INFO/locust.runners: Ramping to 140 users at a rate of 2.00 per second
+[2026-06-21 18:13:02,329] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 47, "ClaimStudioMixedUser": 47, "ClaimStudioUser": 46} (140 total users)
+  t=  1503s  users= 135  rps= 70.0  an=6/75%  ui=5/161%  pending=0
+  t=  1510s  users= 140  rps= 72.4  an=6/75%  ui=5/167%  pending=0
+  t=  1517s  users= 140  rps= 72.3  an=6/73%  ui=5/167%  pending=0
+  t=  1524s  users= 140  rps= 73.4  an=6/73%  ui=1/778%  pending=0
+  t=  1530s  users= 140  rps= 72.1  an=6/74%  ui=1/778%  pending=0
+  t=  1537s  users= 140  rps= 74.1  an=6/74%  ui=4/785%  pending=0
+  t=  1544s  users= 140  rps= 67.4  an=6/75%  ui=4/785%  pending=0
+  t=  1551s  users= 140  rps= 72.1  an=6/75%  ui=5/773%  pending=0
+  t=  1558s  users= 140  rps= 71.4  an=6/75%  ui=5/773%  pending=0
+[2026-06-21 18:14:00,373] mail/INFO/locust.runners: Shape test updating to 145 users at 2.00 spawn rate
+[2026-06-21 18:14:00,373] mail/INFO/locust.runners: Ramping to 145 users at a rate of 2.00 per second
+[2026-06-21 18:14:02,380] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 49, "ClaimStudioMixedUser": 48, "ClaimStudioUser": 48} (145 total users)
+  t=  1564s  users= 142  rps= 71.4  an=6/75%  ui=5/773%  pending=0
+  t=  1571s  users= 145  rps= 72.4  an=6/75%  ui=5/790%  pending=0
+  t=  1578s  users= 145  rps= 76.2  an=6/76%  ui=5/790%  pending=0
+  t=  1584s  users= 145  rps= 74.2  an=6/76%  ui=5/269%  pending=0
+  t=  1591s  users= 145  rps= 70.5  an=6/79%  ui=5/269%  pending=0
+  t=  1598s  users= 145  rps= 73.6  an=6/79%  ui=5/176%  pending=0
+  t=  1605s  users= 145  rps= 76.4  an=6/104%  ui=5/176%  pending=0
+  t=  1611s  users= 145  rps= 71.9  an=6/104%  ui=5/162%  pending=0
+  t=  1618s  users= 145  rps= 75.6  an=6/104%  ui=5/162%  pending=0
+[2026-06-21 18:15:00,431] mail/INFO/locust.runners: Shape test updating to 150 users at 2.00 spawn rate
+[2026-06-21 18:15:00,432] mail/INFO/locust.runners: Ramping to 150 users at a rate of 2.00 per second
+[2026-06-21 18:15:02,435] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 50, "ClaimStudioMixedUser": 50, "ClaimStudioUser": 50} (150 total users)
+  t=  1625s  users= 147  rps= 75.1  an=7/66%  ui=5/162%  pending=0
+  t=  1632s  users= 150  rps= 74.8  an=7/66%  ui=5/164%  pending=0
+  t=  1638s  users= 150  rps= 79.3  an=7/67%  ui=5/164%  pending=0
+  t=  1645s  users= 150  rps= 74.3  an=7/67%  ui=5/164%  pending=0
+  t=  1652s  users= 150  rps= 76.7  an=7/68%  ui=5/164%  pending=0
+  t=  1659s  users= 150  rps= 74.0  an=7/68%  ui=5/163%  pending=0
+  t=  1666s  users= 150  rps= 71.6  an=7/69%  ui=5/163%  pending=0
+  t=  1672s  users= 150  rps= 77.1  an=7/69%  ui=5/171%  pending=0
+  t=  1679s  users= 150  rps= 75.9  an=7/67%  ui=5/171%  pending=0
+[2026-06-21 18:16:00,486] mail/INFO/locust.runners: Shape test updating to 155 users at 2.00 spawn rate
+[2026-06-21 18:16:00,488] mail/INFO/locust.runners: Ramping to 155 users at a rate of 2.00 per second
+[2026-06-21 18:16:02,491] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 52, "ClaimStudioMixedUser": 52, "ClaimStudioUser": 51} (155 total users)
+  t=  1686s  users= 154  rps= 77.1  an=7/67%  ui=5/167%  pending=0
+  t=  1692s  users= 155  rps= 74.7  an=7/67%  ui=5/167%  pending=0
+  t=  1699s  users= 155  rps= 78.4  an=7/68%  ui=5/167%  pending=0
+  t=  1706s  users= 155  rps= 76.1  an=7/68%  ui=5/171%  pending=0
+  t=  1713s  users= 155  rps= 72.8  an=7/69%  ui=5/171%  pending=0
+  t=  1720s  users= 155  rps= 76.0  an=7/69%  ui=5/170%  pending=0
+  t=  1726s  users= 155  rps= 77.0  an=7/67%  ui=5/170%  pending=0
+  t=  1733s  users= 155  rps= 75.4  an=7/67%  ui=5/168%  pending=0
+  t=  1740s  users= 155  rps= 76.6  an=7/69%  ui=5/168%  pending=0
+[2026-06-21 18:17:00,533] mail/INFO/locust.runners: Shape test updating to 160 users at 2.00 spawn rate
+[2026-06-21 18:17:00,534] mail/INFO/locust.runners: Ramping to 160 users at a rate of 2.00 per second
+[2026-06-21 18:17:02,537] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 54, "ClaimStudioMixedUser": 53, "ClaimStudioUser": 53} (160 total users)
+  t=  1746s  users= 160  rps= 80.3  an=7/69%  ui=5/169%  pending=0
+  t=  1753s  users= 160  rps= 79.5  an=7/69%  ui=5/169%  pending=0
+  t=  1760s  users= 160  rps= 79.6  an=7/69%  ui=5/169%  pending=0
+  t=  1767s  users= 160  rps= 76.0  an=7/69%  ui=5/169%  pending=0
+  t=  1774s  users= 160  rps= 79.3  an=7/71%  ui=5/169%  pending=0
+  t=  1780s  users= 160  rps= 77.9  an=7/71%  ui=5/172%  pending=0
+  t=  1787s  users= 160  rps= 79.1  an=7/69%  ui=5/172%  pending=0
+  t=  1794s  users= 160  rps= 77.9  an=7/69%  ui=5/181%  pending=0
+  t=  1801s  users= 160  rps= 78.5  an=7/73%  ui=5/181%  pending=0
+[2026-06-21 18:18:00,583] mail/INFO/locust.runners: Shape test updating to 165 users at 2.00 spawn rate
+[2026-06-21 18:18:00,584] mail/INFO/locust.runners: Ramping to 165 users at a rate of 2.00 per second
+[2026-06-21 18:18:02,588] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 55, "ClaimStudioMixedUser": 55, "ClaimStudioUser": 55} (165 total users)
+  t=  1807s  users= 165  rps= 77.6  an=7/73%  ui=5/170%  pending=0
+  t=  1814s  users= 165  rps= 79.1  an=7/70%  ui=5/170%  pending=0
+  t=  1821s  users= 165  rps= 80.5  an=7/70%  ui=1/819%  pending=0
+  t=  1828s  users= 165  rps= 78.6  an=7/70%  ui=1/819%  pending=0
+  t=  1834s  users= 165  rps= 79.0  an=7/70%  ui=1/819%  pending=0
+  t=  1841s  users= 165  rps= 83.0  an=7/70%  ui=4/819%  pending=0
+  t=  1848s  users= 165  rps= 76.7  an=7/71%  ui=4/819%  pending=0
+  t=  1855s  users= 165  rps= 77.1  an=7/71%  ui=5/819%  pending=0
+[2026-06-21 18:19:00,642] mail/INFO/locust.runners: Shape test updating to 170 users at 2.00 spawn rate
+[2026-06-21 18:19:00,645] mail/INFO/locust.runners: Ramping to 170 users at a rate of 2.00 per second
+  t=  1862s  users= 165  rps= 83.8  an=7/72%  ui=5/819%  pending=0
+[2026-06-21 18:19:02,648] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 57, "ClaimStudioMixedUser": 57, "ClaimStudioUser": 56} (170 total users)
+  t=  1868s  users= 170  rps= 78.7  an=7/72%  ui=5/845%  pending=0
+  t=  1875s  users= 170  rps= 77.9  an=7/70%  ui=5/845%  pending=0
+  t=  1882s  users= 170  rps= 79.5  an=7/70%  ui=5/227%  pending=0
+  t=  1889s  users= 170  rps= 77.2  an=7/68%  ui=5/227%  pending=0
+  t=  1895s  users= 170  rps= 79.0  an=7/68%  ui=5/227%  pending=0
+  t=  1902s  users= 170  rps= 81.8  an=7/68%  ui=5/178%  pending=0
+  t=  1909s  users= 170  rps= 77.5  an=7/71%  ui=5/178%  pending=0
+  t=  1916s  users= 170  rps= 78.5  an=7/71%  ui=5/176%  pending=0
+[2026-06-21 18:20:00,693] mail/INFO/locust.runners: Shape test updating to 175 users at 2.00 spawn rate
+[2026-06-21 18:20:00,694] mail/INFO/locust.runners: Ramping to 175 users at a rate of 2.00 per second
+  t=  1922s  users= 170  rps= 79.0  an=7/76%  ui=5/176%  pending=0
+[2026-06-21 18:20:02,697] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 59, "ClaimStudioMixedUser": 58, "ClaimStudioUser": 58} (175 total users)
+  t=  1929s  users= 175  rps= 79.6  an=7/76%  ui=5/170%  pending=0
+  t=  1936s  users= 175  rps= 79.8  an=7/72%  ui=5/170%  pending=0
+  t=  1943s  users= 175  rps= 78.6  an=7/72%  ui=5/174%  pending=0
+  t=  1949s  users= 175  rps= 79.3  an=7/70%  ui=5/174%  pending=0
+  t=  1956s  users= 175  rps= 80.5  an=7/70%  ui=5/173%  pending=0
+  t=  1963s  users= 175  rps= 79.3  an=7/70%  ui=5/173%  pending=0
+  t=  1970s  users= 175  rps= 79.7  an=7/69%  ui=5/173%  pending=0
+  t=  1977s  users= 175  rps= 80.6  an=7/69%  ui=5/169%  pending=0
+[2026-06-21 18:21:00,739] mail/INFO/locust.runners: Shape test updating to 180 users at 2.00 spawn rate
+[2026-06-21 18:21:00,741] mail/INFO/locust.runners: Ramping to 180 users at a rate of 2.00 per second
+[2026-06-21 18:21:02,746] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 60, "ClaimStudioMixedUser": 60, "ClaimStudioUser": 60} (180 total users)
+  t=  1983s  users= 177  rps= 78.0  an=7/70%  ui=5/169%  pending=0
+  t=  1990s  users= 180  rps= 78.1  an=7/70%  ui=5/174%  pending=0
+  t=  1997s  users= 180  rps= 79.5  an=7/69%  ui=5/174%  pending=0
+  t=  2004s  users= 180  rps= 82.7  an=7/69%  ui=5/168%  pending=0
+  t=  2010s  users= 180  rps= 77.9  an=7/71%  ui=5/168%  pending=0
+  t=  2017s  users= 180  rps= 78.0  an=7/71%  ui=5/169%  pending=0
+  t=  2024s  users= 180  rps= 83.8  an=7/73%  ui=5/169%  pending=0
+  t=  2031s  users= 180  rps= 80.9  an=7/73%  ui=5/169%  pending=0
+  t=  2038s  users= 180  rps= 80.4  an=7/73%  ui=5/171%  pending=0
+[2026-06-21 18:22:00,788] mail/INFO/locust.runners: Shape test updating to 185 users at 2.00 spawn rate
+[2026-06-21 18:22:00,788] mail/INFO/locust.runners: Ramping to 185 users at a rate of 2.00 per second
+[2026-06-21 18:22:02,791] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 62, "ClaimStudioMixedUser": 62, "ClaimStudioUser": 61} (185 total users)
+  t=  2044s  users= 184  rps= 77.1  an=7/71%  ui=5/171%  pending=0
+  t=  2051s  users= 185  rps= 79.8  an=7/71%  ui=5/172%  pending=0
+  t=  2058s  users= 185  rps= 88.8  an=7/72%  ui=5/172%  pending=0
+  t=  2065s  users= 185  rps= 80.4  an=7/72%  ui=5/183%  pending=0
+  t=  2072s  users= 185  rps= 79.4  an=7/76%  ui=5/183%  pending=0
+  t=  2078s  users= 185  rps= 80.6  an=7/76%  ui=5/169%  pending=0
+  t=  2085s  users= 185  rps= 79.8  an=7/76%  ui=5/169%  pending=0
+  t=  2092s  users= 185  rps= 84.6  an=7/76%  ui=5/180%  pending=0
+  t=  2099s  users= 185  rps= 83.0  an=7/73%  ui=5/180%  pending=0
+[2026-06-21 18:23:00,832] mail/INFO/locust.runners: Shape test updating to 190 users at 2.00 spawn rate
+[2026-06-21 18:23:00,833] mail/INFO/locust.runners: Ramping to 190 users at a rate of 2.00 per second
+[2026-06-21 18:23:02,837] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 64, "ClaimStudioMixedUser": 63, "ClaimStudioUser": 63} (190 total users)
+  t=  2105s  users= 190  rps= 84.8  an=7/73%  ui=5/180%  pending=0
+  t=  2112s  users= 190  rps= 86.1  an=7/73%  ui=5/176%  pending=0
+  t=  2119s  users= 190  rps= 89.2  an=7/72%  ui=5/176%  pending=0
+  t=  2126s  users= 190  rps= 89.0  an=7/72%  ui=1/856%  pending=0
+  t=  2132s  users= 190  rps= 88.3  an=7/77%  ui=1/856%  pending=0
+  t=  2139s  users= 190  rps= 86.0  an=7/77%  ui=4/895%  pending=0
+  t=  2146s  users= 190  rps= 90.9  an=7/79%  ui=4/895%  pending=1
+  t=  2153s  users= 190  rps= 86.4  an=7/79%  ui=5/896%  pending=0
+  t=  2160s  users= 190  rps= 82.8  an=7/104%  ui=5/896%  pending=0
+[2026-06-21 18:24:00,885] mail/INFO/locust.runners: Shape test updating to 195 users at 2.00 spawn rate
+[2026-06-21 18:24:00,886] mail/INFO/locust.runners: Ramping to 195 users at a rate of 2.00 per second
+[2026-06-21 18:24:02,890] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 65, "ClaimStudioMixedUser": 65, "ClaimStudioUser": 65} (195 total users)
+  t=  2166s  users= 195  rps= 88.8  an=7/104%  ui=5/896%  pending=0
+  t=  2173s  users= 195  rps= 86.4  an=7/104%  ui=5/896%  pending=0
+  t=  2180s  users= 195  rps= 89.5  an=7/78%  ui=5/896%  pending=0
+  t=  2186s  users= 195  rps= 92.1  an=7/68%  ui=5/315%  pending=0
+  t=  2193s  users= 195  rps= 92.7  an=8/72%  ui=5/315%  pending=0
+  t=  2200s  users= 195  rps= 89.8  an=8/72%  ui=5/194%  pending=0
+  t=  2207s  users= 195  rps= 89.2  an=8/71%  ui=5/194%  pending=0
+  t=  2214s  users= 195  rps= 91.1  an=8/71%  ui=5/190%  pending=0
+  t=  2220s  users= 195  rps= 90.1  an=8/72%  ui=5/190%  pending=0
+[2026-06-21 18:25:00,935] mail/INFO/locust.runners: Shape test updating to 200 users at 2.00 spawn rate
+[2026-06-21 18:25:00,936] mail/INFO/locust.runners: Ramping to 200 users at a rate of 2.00 per second
+[2026-06-21 18:25:02,941] mail/INFO/locust.runners: All users spawned: {"AnalyzeOnlyUser": 67, "ClaimStudioMixedUser": 67, "ClaimStudioUser": 66} (200 total users)
+  t=  2227s  users= 200  rps= 83.4  an=8/72%  ui=5/186%  pending=0
+  t=  2234s  users= 200  rps= 90.3  an=8/70%  ui=5/186%  pending=0
+  t=  2241s  users= 200  rps=100.1  an=8/70%  ui=5/186%  pending=0
+  t=  2247s  users= 200  rps= 92.8  an=8/70%  ui=5/190%  pending=0
+  t=  2254s  users= 200  rps= 90.0  an=8/75%  ui=5/190%  pending=0
+  t=  2261s  users= 200  rps= 91.6  an=8/75%  ui=5/192%  pending=0
+  t=  2268s  users= 200  rps= 88.3  an=8/74%  ui=5/192%  pending=0
+  t=  2274s  users= 200  rps= 84.2  an=8/74%  ui=5/191%  pending=0
+  t=  2281s  users= 200  rps= 99.1  an=8/71%  ui=5/191%  pending=0
+  t=  2288s  users= 200  rps= 94.3  an=8/71%  ui=5/191%  pending=0
+  t=  2294s  users= 200  rps= 89.5  an=8/74%  ui=5/191%  pending=0
+  t=  2301s  users= 200  rps= 87.2  an=8/74%  ui=5/191%  pending=0
+  t=  2308s  users= 200  rps= 94.5  an=8/74%  ui=5/189%  pending=0
+  t=  2315s  users= 200  rps= 94.6  an=8/74%  ui=5/189%  pending=0
+  t=  2321s  users= 200  rps= 92.9  an=8/74%  ui=5/191%  pending=0
+  t=  2328s  users= 200  rps= 92.8  an=8/74%  ui=5/191%  pending=0
+  t=  2335s  users= 200  rps= 87.5  an=8/74%  ui=5/193%  pending=0
+  t=  2341s  users= 200  rps= 92.3  an=8/73%  ui=5/193%  pending=0
+  t=  2348s  users= 200  rps= 93.3  an=8/73%  ui=5/187%  pending=0
+  t=  2355s  users= 200  rps= 90.7  an=8/74%  ui=5/187%  pending=0
+  t=  2362s  users= 200  rps= 91.3  an=8/74%  ui=5/187%  pending=0
+  t=  2368s  users= 200  rps= 90.6  an=8/74%  ui=5/197%  pending=0
+  t=  2375s  users= 200  rps= 97.5  an=8/70%  ui=5/197%  pending=0
+  t=  2382s  users= 200  rps= 90.7  an=8/70%  ui=5/196%  pending=0
+  t=  2388s  users= 200  rps= 92.3  an=8/76%  ui=5/196%  pending=0
+  t=  2395s  users= 200  rps= 92.8  an=8/76%  ui=5/207%  pending=0
+  t=  2402s  users= 200  rps= 91.4  an=8/75%  ui=5/207%  pending=0
+  t=  2409s  users= 200  rps= 92.9  an=8/75%  ui=5/197%  pending=0
+  t=  2415s  users= 200  rps= 90.5  an=8/69%  ui=5/197%  pending=0
+  t=  2422s  users= 200  rps= 93.6  an=8/69%  ui=1/947%  pending=0
+  t=  2429s  users= 200  rps=101.9  an=8/71%  ui=1/947%  pending=0
+  t=  2436s  users= 200  rps= 92.7  an=8/71%  ui=1/947%  pending=0
+  t=  2442s  users= 200  rps= 94.7  an=8/71%  ui=4/968%  pending=0
+  t=  2449s  users= 200  rps= 91.2  an=8/74%  ui=4/968%  pending=0
+  t=  2456s  users= 200  rps= 99.2  an=8/74%  ui=5/954%  pending=0
+[2026-06-21 18:29:01,153] mail/INFO/locust.runners: Shape test stopping
+[2026-06-21 18:29:01,235] mail/INFO/locust.main: Shape test completed, stopping test
+  t=  2462s  users= 200  rps= 93.3  an=8/70%  ui=5/954%  pending=0
+[2026-06-21 18:29:06,237] mail/INFO/locust.main: --autoquit time reached, shutting down
+[2026-06-21 18:29:06,238] mail/INFO/locust.main: Run time limit set to 2460 seconds
+[2026-06-21 18:29:06,238] mail/INFO/locust.main: Shutting down (exit code 0)
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      GET /claim-studio                                                              25865     0(0.00%) |    186       6    1231     28 |   10.51        0.00
+POST     POST /api/claim-studio/analyze                                                113107     0(0.00%) |    292      25    2727    180 |   45.96        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                    138972     0(0.00%) |    272       6    2727    160 |   56.47        0.00
+
+Response time percentiles (approximated)
+Type     Name                                                                                  50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+GET      GET /claim-studio                                                                      28    160    330    420    600    740    880    950   1100   1200   1200  25865
+POST     POST /api/claim-studio/analyze                                                        180    340    460    530    680    800    910    980   1400   2200   2700 113107
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+         Aggregated                                                                            160    310    440    510    670    790    900    980   1300   2200   2700 138972
+
+  Checkpoint @50 users
+[PASS] stage users=50
+  rps=27.5 p95=190ms fail/s=0.00 collapses=0 replicas_max=3
+  Checkpoint @100 users
+[PASS] stage users=100
+  rps=53.5 p95=360ms fail/s=0.00 collapses=0 replicas_max=5
+  Checkpoint @150 users
+[PASS] stage users=150
+  rps=79.3 p95=530ms fail/s=0.00 collapses=0 replicas_max=7
+  Checkpoint @200 users
+[PASS] stage users=200
+  rps=101.9 p95=790ms fail/s=0.00 collapses=0 replicas_max=8
+CXR LOAD GATE — 20260621-174755 (cumulative)
+Report: /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-174522/gate-report-20260621-174755.json
+  [PASS] users=100 rps=53.5 p95=360ms collapses=0
+  [PASS] users=150 rps=79.3 p95=530ms collapses=0
+  [PASS] users=200 rps=101.9 p95=790ms collapses=0
+  [PASS] users=50 rps=27.5 p95=190ms collapses=0
+GATE PASSED
+
+Results: /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-174522
+Grafana: http://127.0.0.1:3001/d/cxr-hpa-load-003 — export screenshots into /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-174522

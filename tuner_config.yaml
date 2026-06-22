@@ -1,0 +1,39 @@
+# GATE-002 — ANALYZER SATURATION (OBS-001 / load-20260618 comparable).
+# 100% POST /api/claim-studio/analyze — same shape as
+# cxr-portfolio/.../locustfile-ramp-continuous.py + run-saturation-ramp-until-break-gui.sh
+#
+# Lightweight mixed profile: tuner_config.lightweight.yaml
+
+load_target:
+  mode: cumulative_ramp
+  profile: analyzer_saturation
+  ramp_start: 15
+  ramp_step: 5
+  ramp_max: 200
+  stage_time: 60s          # +5 users every 60s (portfolio default)
+  hold_at_max: 3m          # soak at 200 — collapse-on-cooldown window
+  spawn_rate: 2
+  score_checkpoints: [50, 100, 150, 200]
+
+slos:
+  max_collapses: 0
+  max_failures_per_s: 0.5
+  max_p95_ms:
+    50: 3000
+    100: 5000
+    150: 7000
+    200: 9000
+
+search:
+  analyzer:
+    autoscaling.maxReplicas: [6, 8, 10]
+    autoscaling.minReplicas: [1, 2]
+    autoscaling.keda.prometheus.p95ThresholdMs: [2000]
+  ui:
+    autoscaling.maxReplicas: [4, 5]
+
+score:
+  collapse_weight: 1000
+  failure_weight: 100
+  p95_weight: 1
+  rps_bonus: 10

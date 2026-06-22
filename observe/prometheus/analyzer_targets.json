@@ -1,0 +1,12 @@
+[
+  {
+    "targets": [
+      "host.docker.internal:8767",
+      "host.docker.internal:8768"
+    ],
+    "labels": {
+      "cluster": "docker-desktop",
+      "service": "cxr-analyzer"
+    }
+  }
+]

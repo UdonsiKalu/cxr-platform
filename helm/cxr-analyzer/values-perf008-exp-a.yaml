@@ -1,0 +1,12 @@
+# PERF-008 Experiment A — baseline (unchanged GATE-002 winner signal)
+# Apply: helm upgrade cxr-analyzer ./helm/cxr-analyzer -n cxr-ui -f helm/cxr-analyzer/values.yaml -f helm/cxr-analyzer/values-perf008-exp-a.yaml
+env:
+  # Semaphore so queue/wait histogram + queue_depth are visible under load (PERF-008 lab)
+  CXR_ANALYZER_MAX_CONCURRENT: "4"
+
+autoscaling:
+  keda:
+    prometheus:
+      mode: p95
+      p95ThresholdMs: 2000
+      query: cxr_locust_p95_ms

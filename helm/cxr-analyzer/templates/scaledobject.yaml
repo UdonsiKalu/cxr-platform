@@ -1,0 +1,36 @@
+{{- if and .Values.autoscaling.enabled .Values.autoscaling.keda.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: cxr-analyzer
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: cxr-analyzer
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  scaleTargetRef:
+    name: cxr-analyzer
+  minReplicaCount: {{ .Values.autoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.autoscaling.maxReplicas }}
+  pollingInterval: {{ .Values.autoscaling.keda.pollingInterval }}
+  cooldownPeriod: {{ .Values.autoscaling.keda.cooldownPeriod }}
+  triggers:
+    - type: cpu
+      metricType: Utilization
+      metadata:
+        value: {{ .Values.autoscaling.targetCPUUtilizationPercentage | quote }}
+    {{- if .Values.autoscaling.keda.prometheus.enabled }}
+    - type: prometheus
+      metadata:
+        serverAddress: {{ .Values.autoscaling.keda.prometheus.serverAddress | quote }}
+        {{- if eq (.Values.autoscaling.keda.prometheus.mode | default "p95") "backpressure" }}
+        metricName: cxr_analyzer_inflight_per_pod
+        threshold: {{ .Values.autoscaling.keda.prometheus.backpressureThreshold | quote }}
+        query: {{ .Values.autoscaling.keda.prometheus.backpressureQuery | quote }}
+        {{- else }}
+        metricName: cxr_load_p95_pressure
+        threshold: {{ .Values.autoscaling.keda.prometheus.p95ThresholdMs | quote }}
+        query: {{ .Values.autoscaling.keda.prometheus.query | quote }}
+        {{- end }}
+    {{- end }}
+{{- end }}

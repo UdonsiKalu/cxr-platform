@@ -16,6 +16,17 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      # LOAD-003 stability (2026-06-18): override via `kubectl patch application` or push values.yaml to Git.
+      # parameters:
+      #   - name: image.tag
+      #     value: perf003
+      #     forceString: true
+      #   - name: autoscaling.maxReplicas
+      #     value: "8"
+      #   - name: autoscaling.minReplicas
+      #     value: "2"
+      #   - name: autoscaling.keda.enabled
+      #     value: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: cxr-ui

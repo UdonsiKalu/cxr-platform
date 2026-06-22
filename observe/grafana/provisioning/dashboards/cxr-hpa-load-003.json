@@ -1,10 +1,10 @@
 {
   "title": "CXR LOAD-003 — Load test (live + history)",
   "uid": "cxr-hpa-load-003",
-  "tags": ["cxr", "hpa", "load-003", "obs-001", "locust"],
+  "tags": ["cxr", "hpa", "load-003", "obs-001", "obs-002", "perf-008", "locust"],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 4,
+  "version": 5,
   "refresh": "5s",
   "time": { "from": "now-30m", "to": "now" },
   "panels": [
@@ -83,14 +83,14 @@
     },
     {
       "type": "timeseries",
-      "title": "HPA signals + replica count",
+      "title": "Scaling signals + replica count (OBS-002: deployment/KEDA truth)",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 11 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        { "expr": "cxr_hpa_analyzer_current_cpu_percent", "legendFormat": "analyzer CPU % (HPA)" },
+        { "expr": "cxr_hpa_analyzer_current_cpu_percent", "legendFormat": "analyzer CPU % (HPA or synthetic)" },
         { "expr": "cxr_hpa_analyzer_target_cpu_percent", "legendFormat": "analyzer target %" },
         { "expr": "cxr_hpa_ui_current_cpu_percent", "legendFormat": "ui CPU % (HPA)" },
-        { "expr": "cxr_analyzer_replicas", "legendFormat": "analyzer replicas" },
+        { "expr": "cxr_analyzer_replicas", "legendFormat": "analyzer replicas (ready)" },
         { "expr": "cxr_ui_replicas", "legendFormat": "ui replicas" }
       ],
       "fieldConfig": {
@@ -156,13 +156,114 @@
       }
     },
     {
+      "type": "text",
+      "title": "Analyzer Backpressure & Queueing (PERF-008)",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 19 },
+      "options": {
+        "mode": "markdown",
+        "content": "**Signals:** `in-flight` + `queue/wait` = backpressure. **`queue_depth`** only when `CXR_ANALYZER_MAX_CONCURRENT>0` (semaphore). Not Kafka-style backlog otherwise. Requires `k8-analyzer-metrics-forward.sh` + analyzer image with `/metrics`."
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Analyzer in-flight requests",
+      "gridPos": { "h": 7, "w": 6, "x": 0, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum(cxr_analyzer_inflight_requests)", "legendFormat": "in-flight (total)" },
+        { "expr": "cxr_analyzer_inflight_per_pod", "legendFormat": "in-flight per pod" },
+        { "expr": "sum(cxr_analyzer_queue_depth)", "legendFormat": "queue depth (limiter only)" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "lineWidth": 2 }, "min": 0 } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Analyzer queue / wait time (p50 / p95)",
+      "description": "Semaphore wait before /analyze handler (CXR_ANALYZER_MAX_CONCURRENT). queue_depth > 0 when limiter enabled.",
+      "gridPos": { "h": 7, "w": 6, "x": 6, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_analyzer_queue_wait_p50_ms", "legendFormat": "wait p50 ms" },
+        { "expr": "cxr_analyzer_queue_wait_p95_ms", "legendFormat": "wait p95 ms" },
+        { "expr": "sum(cxr_analyzer_queue_depth)", "legendFormat": "queue depth" }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "ms", "custom": { "lineWidth": 2 }, "min": 0 },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "queue depth" },
+            "properties": [
+              { "id": "unit", "value": "short" },
+              { "id": "custom.axisPlacement", "value": "right" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Backpressure vs E2E p95 latency",
+      "gridPos": { "h": 7, "w": 6, "x": 12, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum(cxr_analyzer_inflight_requests)", "legendFormat": "in-flight (total)" },
+        { "expr": "cxr_analyzer_inflight_per_pod", "legendFormat": "in-flight per pod" },
+        { "expr": "cxr_locust_p95_ms", "legendFormat": "Locust E2E p95 ms" }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Locust E2E p95 ms" },
+            "properties": [
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "unit", "value": "ms" },
+              { "id": "color", "value": { "fixedColor": "#dc2626", "mode": "fixed" } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "KEDA replicas vs backpressure",
+      "gridPos": { "h": 7, "w": 6, "x": 18, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_analyzer_replicas", "legendFormat": "analyzer replicas (ready)" },
+        { "expr": "cxr_analyzer_inflight_per_pod", "legendFormat": "in-flight per pod" }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2 }, "min": 0 },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "analyzer replicas (ready)" },
+            "properties": [{ "id": "custom.axisPlacement", "value": "right" }]
+          }
+        ]
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Replica oscillation (5m changes)",
+      "description": "Proxy for thrashing — higher = more scale flapping",
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_analyzer_replica_changes_5m", "legendFormat": "replica changes / 5m" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 } },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
       "type": "timeseries",
       "title": "Scrape health",
-      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 19 },
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 31 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         { "expr": "up{job=\"cxr-load-exporter\"}", "legendFormat": "cxr-load-exporter" },
         { "expr": "up{job=\"kube-state-metrics\"}", "legendFormat": "kube-state-metrics" },
+        { "expr": "up{job=\"cxr-analyzer\"}", "legendFormat": "cxr-analyzer /metrics" },
         { "expr": "cxr_load_exporter_up", "legendFormat": "exporter poll OK" }
       ],
       "fieldConfig": { "defaults": { "unit": "short", "max": 1, "min": 0 }, "overrides": [] }

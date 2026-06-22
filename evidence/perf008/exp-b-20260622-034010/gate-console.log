@@ -1,0 +1,31 @@
+== GATE-001 preflight ==
+cxr-load-exporter up: http://127.0.0.1:9102/metrics
+  mode=cumulative  profile=analyzer_saturation  ramp=15+5→200  tier=60s  hold=3m
+  namespace=cxr-ui  host=http://127.0.0.1:8081
+
+== Cumulative ramp [analyzer_saturation]: 15 +5 → 200 (60s/tier, 180s@max, ~2460s total) ==
+== CXR Locust cumulative ramp [analyzer_saturation] (web :8092) ==
+  Target: http://127.0.0.1:8081
+  Ramp:   15 +5 → 200
+  Tier:   60s  hold@max: 180s
+  Run:    2460s
+  Checkpoint @50 users
+[PASS] stage users=50
+  rps=28.1 p95=150ms fail/s=0.00 collapses=0 replicas_max=2
+  Checkpoint @100 users
+[PASS] stage users=100
+  rps=53.6 p95=330ms fail/s=0.00 collapses=0 replicas_max=4
+  Checkpoint @150 users
+[PASS] stage users=150
+  rps=78.5 p95=500ms fail/s=0.00 collapses=0 replicas_max=6
+  Checkpoint @200 users
+[FAIL] stage users=200
+  rps=115.8 p95=820ms fail/s=115.80 collapses=0 replicas_max=8
+  - failures/s peak 115.80 > 0.5
+CXR LOAD GATE — 20260622-034211 (cumulative)
+Report: /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-b-20260622-034010/gate-report-20260622-034211.json
+  [PASS] users=100 rps=53.6 p95=330ms collapses=0
+  [PASS] users=150 rps=78.5 p95=500ms collapses=0
+  [FAIL] users=200 rps=115.8 p95=820ms collapses=0
+  [PASS] users=50 rps=28.1 p95=150ms collapses=0
+GATE FAILED — see /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-b-20260622-034010/gate-report-20260622-034211.json
