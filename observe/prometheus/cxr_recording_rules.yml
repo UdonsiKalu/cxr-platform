@@ -1,0 +1,79 @@
+# GATE-001 / SCALE-001 — derived signals for LOAD-003 Grafana + alerts.
+# Mounted into Prometheus via compose.observe.yaml.
+
+groups:
+  - name: cxr_load_gate
+    interval: 15s
+    rules:
+      # 1 = load within SLO-ish bounds (failures, pending, p95).
+      - record: cxr_load_stable
+        expr: |
+          (
+            (cxr_locust_failures_per_second < 1)
+            and (cxr_analyzer_pending_pods < 3)
+            and (cxr_locust_p95_ms < 6000)
+            and (cxr_load_exporter_up == 1)
+          )
+
+      # 1 = analyzer replica count dropped sharply (HPA thrash / rollout cliff).
+      - record: cxr_replica_collapse
+        expr: |
+          (
+            (cxr_analyzer_replicas <= 2)
+            and (cxr_analyzer_replicas offset 30s >= 5)
+          )
+
+      # Convenience: p95 pressure above 2s (KEDA / dashboard).
+      - record: cxr_load_p95_pressure
+        expr: cxr_locust_p95_ms
+
+      # PERF-008 — analyzer backpressure (in-flight + wait; not Kafka backlog unless limiter on)
+      - record: cxr_analyzer_backpressure_inflight
+        expr: sum(cxr_analyzer_inflight_requests) or vector(0)
+
+      # Average in-flight per ready analyzer pod (Experiment B KEDA signal)
+      - record: cxr_analyzer_inflight_per_pod
+        expr: |
+          sum(cxr_analyzer_inflight_requests)
+          / clamp_min(cxr_analyzer_replicas, 1)
+
+      - record: cxr_analyzer_queue_wait_p50
+        expr: histogram_quantile(0.50, sum(rate(cxr_analyzer_queue_wait_seconds_bucket[1m])) by (le))
+
+      - record: cxr_analyzer_queue_wait_p95
+        expr: histogram_quantile(0.95, sum(rate(cxr_analyzer_queue_wait_seconds_bucket[1m])) by (le))
+
+      - record: cxr_analyzer_queue_wait_p50_ms
+        expr: cxr_analyzer_queue_wait_p50 * 1000
+
+      - record: cxr_analyzer_queue_wait_p95_ms
+        expr: cxr_analyzer_queue_wait_p95 * 1000
+
+      # Replica oscillation proxy (5m window) — compare experiments A vs B
+      - record: cxr_analyzer_replica_changes_5m
+        expr: changes(cxr_analyzer_replicas[5m])
+
+  - name: cxr_synthetic_readiness
+    interval: 15s
+    rules:
+      - record: cxr_synthetic_rps
+        expr: sum(rate(synthetic_requests_total{status="200"}[1m])) by (profile)
+
+      - record: cxr_synthetic_error_rate
+        expr: |
+          sum(rate(synthetic_failures_total[5m])) by (profile)
+          / clamp_min(sum(rate(synthetic_requests_total[5m])) by (profile), 0.001)
+
+      - record: cxr_synthetic_p95_latency_seconds
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum(rate(synthetic_request_latency_seconds_bucket[5m])) by (le, profile)
+          )
+
+      - record: cxr_synthetic_availability_ratio
+        expr: |
+          1 - (
+            sum(rate(synthetic_failures_total[5m])) by (profile)
+            / clamp_min(sum(rate(synthetic_requests_total[5m])) by (profile), 0.001)
+          )
