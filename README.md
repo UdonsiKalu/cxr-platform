@@ -11,10 +11,10 @@ Bootcamp labs live here so **`cxrlabs-dev`** (production gateway/analysis compos
 | [`compose/`](compose/README.md) | Docker Compose stacks (core, observe, labs) |
 | [`docker/`](docker/README.md) | UI and analyzer Dockerfiles |
 | [`docs/`](docs/README.md) | Runbooks, bootcamp manuals, standards |
-| [`scripts/`](scripts/README.md) | Entry-point scripts (`00`–`27`) + `build/` |
+| [`scripts/`](scripts/README.md) | Entry-point scripts (`00`–`27`) + `build/` + `lib/cxr-paths.sh` |
 | `helm/`, `k8s/`, `observe/`, `load/` | Runtime configs (unchanged) |
 
-Root symlinks (`compose.observe.yaml`, `docs/K8-DEPLOY.md`, etc.) keep existing commands working.
+Canonical paths live under `compose/`, `docker/`, and `docs/{runbooks,manuals,standards}/`. Scripts resolve them via **`scripts/lib/cxr-paths.sh`**.
 
 **App source (build context):** `cxr-ui-prune-rehearsal/cxr-ui`  
 **Rehearsal dev:** `npm run dev:rehearsal` on **:8251** (systemd) — not this folder.
@@ -43,7 +43,7 @@ kubectl port-forward -n cxr-ui svc/cxr-ui 8081:3000 --address=127.0.0.1
 
 Browser: **http://localhost:8081**
 
-Full guide: **`docs/K8-DEPLOY.md`**
+Full guide: **`docs/runbooks/k8-deploy.md`**
 
 | Step | Script |
 |------|--------|
@@ -62,7 +62,7 @@ Full guide: **`docs/K8-DEPLOY.md`**
 
 - UI: http://localhost:3000  
 - Qdrant: http://localhost:6333  
-- Replicate steps: **`docs/REPLICATE-DOCKER-OUTLINE.md`**  
+- Replicate steps: **`docs/runbooks/replicate-docker-outline.md`**  
 - Full platform syllabus map: **`docs/PLATFORM-SYLLABUS-MAP.md`**
 
 ## Teardown
@@ -74,4 +74,8 @@ kind delete cluster --name cxr-lab
 
 ## Rehearsal duplicates
 
-`cxr-ui-prune-rehearsal/cxr-ui/deploy/k8s/` and `scripts/ops/` mirror manifests for study; **builds use this repo’s `Dockerfile` + `scripts/02-build-and-load.sh`.**
+`cxr-ui-prune-rehearsal/cxr-ui/deploy/k8s/` and `scripts/ops/` mirror manifests for study; **builds use this repo’s `docker/ui/Dockerfile` + `scripts/02-build-and-load.sh`.**
+
+## Phase 4 cleanup audit
+
+Symlink removal and path mapping: **`docs/PHASE4-CLEANUP-AUDIT.md`** (revert instructions included).
