@@ -32,6 +32,15 @@ scrape_configs:
         labels:
           cluster: docker-desktop
 
+  # Synthetic operational-readiness traffic — scripts/25-synthetic-readiness-up.sh (host :9103)
+  - job_name: cxr-synthetic-readiness
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:9103"]
+        labels:
+          profile: operational_readiness
+          environment: local
+
   # Analyzer backpressure — per-pod port-forwards (8767+) via k8-analyzer-metrics-forward.sh
   - job_name: cxr-analyzer
     scrape_interval: 5s

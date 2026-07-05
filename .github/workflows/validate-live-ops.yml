@@ -1,0 +1,66 @@
+# Live Ops observe stack — lightweight PR checks (compose, Grafana JSON, scripts).
+name: validate-live-ops
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'compose.observe.yaml'
+      - 'observe/**'
+      - 'scripts/25-synthetic-readiness-up.sh'
+      - 'scripts/26-live-ops-stream-up.sh'
+      - 'scripts/27-live-ops-fault-scenario.sh'
+      - 'docs/operations/**'
+      - 'systemd/cxr-atlas-8250.service'
+      - 'systemd/cxr-lab.target'
+      - 'docs/PERSISTENT-PORTS.md'
+      - 'scripts/09-enable-persistent-ports.sh'
+      - '.github/workflows/validate-live-ops.yml'
+  push:
+    branches: [feat/live-ops-stream]
+    paths:
+      - 'compose.observe.yaml'
+      - 'observe/**'
+      - 'scripts/25-synthetic-readiness-up.sh'
+      - 'scripts/26-live-ops-stream-up.sh'
+      - 'scripts/27-live-ops-fault-scenario.sh'
+      - 'docs/operations/**'
+      - 'systemd/**'
+      - 'docs/PERSISTENT-PORTS.md'
+      - 'scripts/09-enable-persistent-ports.sh'
+      - '.github/workflows/validate-live-ops.yml'
+
+jobs:
+  validate-live-ops:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Required Live Ops files present
+        run: |
+          test -f compose.observe.yaml
+          test -f observe/prometheus.yml
+          test -f observe/prometheus/cxr_recording_rules.yml
+          test -f observe/grafana/provisioning/dashboards/cxr-live-operations-center.json
+          test -f observe/synthetic-traffic/readiness_generator.py
+          test -f scripts/25-synthetic-readiness-up.sh
+          test -f scripts/26-live-ops-stream-up.sh
+          test -f scripts/27-live-ops-fault-scenario.sh
+          test -f docs/operations/live-operations-center.md
+
+      - name: Validate Grafana dashboard JSON
+        run: python3 -m json.tool observe/grafana/provisioning/dashboards/cxr-live-operations-center.json > /dev/null
+
+      - name: Validate Prometheus config references
+        run: |
+          grep -q 'cxr-synthetic-readiness' observe/prometheus.yml
+          grep -q 'cxr_synthetic_rps' observe/prometheus/cxr_recording_rules.yml
+
+      - name: Live Ops scripts are executable
+        run: |
+          test -x scripts/25-synthetic-readiness-up.sh
+          test -x scripts/26-live-ops-stream-up.sh
+          test -x scripts/27-live-ops-fault-scenario.sh
+
+      - name: Compose observe config parses
+        run: docker compose -f compose.observe.yaml config -q
