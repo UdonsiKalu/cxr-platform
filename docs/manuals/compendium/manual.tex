@@ -1,0 +1,227 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[margin=0.85in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{CXR Bootcamp Labs Compendium\\
+\large Connections, live adjustments, and UI evidence\\
+\large \texttt{cxr-ops-lab} + rehearsal \texttt{cxr-ui}}
+\author{CXR Ops Lab}
+\date{2026-05-31}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Single printable index for implemented software labs: how each tool connects to
+\textbf{Claim Studio (:3000)} and \textbf{rehearsal dev (:8251)}, files added, fixes applied during bootcamp,
+and verified UI screenshots. Individual deep-dive PDFs live alongside this compendium in \texttt{docs/}.
+\end{abstract}
+\tableofcontents
+\newpage
+
+\chapter{How bootcamp wiring works (master view)}
+
+\section{Two CXR entry points}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+URL & What it is & Which labs touch it \\
+\midrule
+\textbf{:3000} \texttt{/claim-studio} & Compose \texttt{cxr-ui} (product dashboard) & SW.12 logs only \\
+\textbf{:8251} \texttt{/claim-studio} & Rehearsal \texttt{npm dev} & SW.11 OTel traces \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Pattern: every SW lab uses the same wiring recipe}
+
+Each elective (SW.12--SW.18) is a \textbf{standalone Compose file} under \texttt{cxr-ops-lab/}:
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Step & Artifact & Example (SW.17 Vault) \\
+\midrule
+1 & \texttt{compose.*.yaml} & \texttt{compose.vault.yaml} $\rightarrow$ container + ports \\
+2 & \texttt{lab/<tool>/} & \texttt{seed-cxr-secrets.sh}, \texttt{cxr-secret-map.json} \\
+3 & \texttt{scripts/NN-*-up.sh} & \texttt{20-vault-up.sh} wraps \texttt{compose up} \\
+4 & \texttt{scripts/NN-*-smoke.sh} & Health check + golden-path verify \\
+5 & \texttt{evidence/SW*.md} + PNG & Checklist + UI screenshot \\
+6 & \texttt{docs/CXR-*-LAB-MANUAL.pdf} & This compendium + per-lab PDF \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Connection matrix (what talks to what)}
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\toprule
+Lab & Data flow & Wired to :3000 / :8251? \\
+\midrule
+SW.11 OTel & :8251 app $\rightarrow$ :4318 $\rightarrow$ Jaeger :16686 & \textbf{Yes} (:8251) \\
+SW.12 ELK & :3000 container logs $\rightarrow$ Filebeat $\rightarrow$ Kibana & \textbf{Yes} (:3000 logs) \\
+SW.13 Kafka & script $\rightarrow$ :9092 topic $\rightarrow$ UI :8082 & No \\
+SW.14 Redis & script $\rightarrow$ :6379 $\rightarrow$ Insight :5540 & No \\
+SW.15 GraphQL & :4000 $\rightarrow$ :4001/:4002 subgraphs & No \\
+SW.16 gRPC & grpcui :8090 $\rightarrow$ :50051 ClaimAnalysis & No \\
+SW.17 Vault & seed script $\rightarrow$ KV \texttt{secret/cxr/*} $\rightarrow$ UI :8200 & No (future K8) \\
+SW.18 Langfuse & \texttt{send-trace.mjs} $\rightarrow$ :3100 UI & No (future judge/LLM) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Design choice:} electives run \emph{beside} Claim Studio so you learn each tool without rewriting the app every time.
+
+\chapter{Product dashboard vs observability UIs}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+URL & Role & Wired in lab? \\
+\midrule
+\textbf{:3000} \texttt{/claim-studio} & \textbf{Main CXR dashboard} (Compose) & Log source (SW.12) \\
+\textbf{:8251} \texttt{/claim-studio} & Rehearsal dev + OTel traces & Trace source (SW.11) \\
+:16686 & Jaeger --- traces & SW.11 \\
+:5601 & Kibana --- logs & SW.12 \\
+:5540 & Redis Insight --- cache keys & SW.14 \\
+:4000 & Apollo Sandbox --- GraphQL & SW.15 \\
+:8082 & Kafka UI --- topics/messages & SW.13 \\
+:8090 & grpcui --- gRPC invoke & SW.16 \\
+:8200 & Vault --- secrets UI & SW.17 \\
+:3100 & Langfuse --- LLM traces & SW.18 \\
+:3001 & Grafana --- metrics & SW.9--10 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\chapter{Lab PDF index}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+SW & PDF & UI \\
+\midrule
+SW.11 OTel & \texttt{CXR-OTEL-LAB-MANUAL.pdf} & Jaeger :16686 \\
+SW.12 ELK & \texttt{CXR-ELK-LAB-MANUAL.pdf} & Kibana :5601 \\
+SW.13 Kafka & \texttt{CXR-KAFKA-LAB-MANUAL.pdf} & Kafka UI :8082 \\
+SW.14 Redis & \texttt{CXR-REDIS-LAB-MANUAL.pdf} & Redis Insight :5540 \\
+SW.15 GraphQL & \texttt{CXR-GRAPHQL-LAB-MANUAL.pdf} & Apollo :4000 \\
+SW.16 gRPC & \texttt{CXR-GRPC-LAB-MANUAL.pdf} & grpcui :8090 \\
+SW.17 Vault & \texttt{CXR-VAULT-LAB-MANUAL.pdf} & Vault :8200 \\
+SW.18 Langfuse & \texttt{CXR-LANGFUSE-LAB-MANUAL.pdf} & Langfuse :3100 \\
+Deploy & \texttt{CXR-K8-DEPLOYMENT-MANUAL.pdf} & K8 / Argo / :8081 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Build all: \texttt{./scripts/build-all-lab-pdfs.sh}
+
+\chapter{SW.11 OpenTelemetry --- connection + fixes + UI}
+
+\textbf{Path:} :8251 Claim Studio $\rightarrow$ OTLP :4318 $\rightarrow$ Jaeger :16686.
+
+\textbf{Live adjustments:} Next.js 16 \texttt{searchParams}; instrumentation split; \texttt{Resource} API; \texttt{serverExternalPackages}; stop systemd :8251 before \texttt{OTEL\_*} dev.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{../evidence/SW11-jaeger-search-2026-05-30.png}
+\caption{Jaeger Search (SW.11).}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{../evidence/SW11-jaeger-waterfall-post-analyze-2026-05-30.png}
+\caption{POST analyze waterfall (SW.11).}
+\end{figure}
+
+\chapter{SW.12 ELK --- connection + fixes + UI}
+
+\textbf{Path:} :3000 \texttt{cxr-ui} logs $\rightarrow$ Filebeat $\rightarrow$ ES :9200 $\rightarrow$ Kibana :5601.
+
+\textbf{Live adjustments:} \texttt{cxr.bootcamp.logs} label; Kibana Explore/Data Views path; time picker vs histogram; not :8251 logs.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{../evidence/SW12-kibana-discover-2026-05-31.png}
+\caption{Kibana Discover (SW.12).}
+\end{figure}
+
+\chapter{SW.14 Redis --- connection + fixes + UI}
+
+\textbf{Path:} cache-aside script $\rightarrow$ Redis :6379 $\rightarrow$ Redis Insight :5540.
+
+\textbf{Live adjustments:} Insight service added; connect \texttt{redis://redis:6379}; container name filter; TTL/DEL timing.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{../evidence/SW14-redis-insight-2026-05-31.png}
+\caption{Redis Insight key view (SW.14).}
+\end{figure}
+
+\chapter{SW.15 GraphQL --- connection + fixes + UI}
+
+\textbf{Path:} Browser :4000 $\rightarrow$ gateway $\rightarrow$ claims :4001 + policies :4002.
+
+\textbf{Live adjustments:} \texttt{parse()} for federation SDL; subgraph healthchecks before gateway.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{../evidence/SW15-graphql-sandbox-2026-05-31.png}
+\caption{Apollo Sandbox \texttt{Sw15GoldenPath} (SW.15).}
+\end{figure}
+
+\chapter{SW.13 Kafka (UI at :8082)}
+
+\textbf{Path:} \texttt{kafka-produce-sample.sh} $\rightarrow$ topic \texttt{cxr.claims.events} $\rightarrow$ Kafka UI.
+
+No archived screenshot yet --- capture Messages tab in Kafka UI for optional \texttt{SW13-kafka-ui-*.png}.
+
+\chapter{SW.16 gRPC --- connection + UI}
+
+\textbf{Path:} grpcui :8090 $\rightarrow$ ClaimAnalysis :50051 $\rightarrow$ mock \texttt{demo-1}.
+
+\textbf{Live adjustments:} \texttt{@grpc/reflection} on server (grpc-ui crash without it); grpc-ui restart in \texttt{19-grpc-up.sh}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{../evidence/SW16-grpcui-2026-05-31.png}
+\caption{grpcui \texttt{AnalyzeClaim} form (SW.16).}
+\end{figure}
+
+\chapter{SW.17 Vault --- full wiring + UI}
+
+\textbf{Chain:} \texttt{20-vault-up.sh} $\rightarrow$ \texttt{compose.vault.yaml} $\rightarrow$ Vault :8200 $\rightarrow$
+\texttt{seed-cxr-secrets.sh} (\texttt{docker exec vault kv put}) $\rightarrow$ \texttt{secret/cxr/analyzer}.
+
+\textbf{Login:} Token only --- \texttt{cxr-bootcamp-root}. UI: Secrets $\rightarrow$ \texttt{secret/cxr/analyzer}.
+
+\textbf{Not wired:} Claim Studio still uses \texttt{.env}; future = External Secrets on K8 :8081.
+
+See \texttt{CXR-VAULT-LAB-MANUAL.pdf} for step-by-step diagram.
+
+\chapter{SW.18 Langfuse --- wiring}
+
+\textbf{Chain:} \texttt{21-langfuse-up.sh} $\rightarrow$ \texttt{compose.langfuse.yaml} (v2 + Postgres) $\rightarrow$ :3100 UI $\rightarrow$
+user API keys in \texttt{lab/langfuse/keys.env} $\rightarrow$ \texttt{send-trace.mjs} $\rightarrow$ trace \texttt{cxr-sw18-golden-path}.
+
+\textbf{Not wired:} \texttt{judge\_claim.py} / doc-reasoning routes do not send traces yet.
+
+\chapter{What is not wired (by design)}
+
+\begin{itemize}
+  \item Redis, GraphQL, Kafka, gRPC, Vault, Langfuse --- not called from Claim Studio API routes.
+  \item ELK --- ships :3000 Docker logs only (not :8251 terminal dev).
+  \item Optional: Compose :3000 OTel via \texttt{compose.otel-link.yaml} (separate from :8251 golden path).
+\end{itemize}
+
+\end{document}
