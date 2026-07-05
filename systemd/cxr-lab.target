@@ -1,6 +1,6 @@
 [Unit]
-Description=CXR lab ports (:8251 :3000 :3002 :6335 :8081 :9090 :3001)
-Wants=cxr-rehearsal-dev.service cxr-ops-lab-compose.service cxr-sw1-test.service cxr-k8-forward.service cxr-observe.service
+Description=CXR lab ports (:8250 :8251 :3000 :3002 :6335 :8081 :9090 :3001)
+Wants=cxr-atlas-8250.service cxr-rehearsal-dev.service cxr-ops-lab-compose.service cxr-sw1-test.service cxr-k8-forward.service cxr-observe.service
 After=docker.service
 
 [Install]

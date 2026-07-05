@@ -4,7 +4,8 @@
 
 | Port | Service | Persistence |
 |------|---------|-------------|
-| **8251** | Rehearsal Next.js (`cxr-rehearsal-dev.service`) | user systemd, `Restart=always` |
+| **8250** | Atlas UI (`cxr-atlas-8250.service` → `next start`, rehearsal tree) | user systemd, `Restart=always` |
+| **8251** | Rehearsal Next.js dev (`cxr-rehearsal-dev.service` → `next dev`) | user systemd, `Restart=always` |
 | **3000** | Compose CXR UI (`cxr-ops-lab-compose.service`) | user systemd + `restart: unless-stopped` |
 | **6335** | Compose Qdrant (`CXR_COMPOSE_QDRANT=1` on compose unit) | same stack as :3000 |
 | **3002** | SW.1 UI (`cxr-sw1-test.service` → `cxr-sw1-test` container) | user systemd + Docker `unless-stopped` |
@@ -28,9 +29,9 @@ That enables **linger**, installs user systemd units, starts **`cxr-lab.target`*
 ## Cursor workspace
 
 Open the **`staging`** folder (not only a subfolder).  
-`staging/.vscode/settings.json` labels ports and sets **`remote.autoForwardPortsSource: hybrid`** so the **Ports** panel lists **8251**, **3000**, **3002**, **6335**, **8081** when listeners are up.
+`staging/.vscode/settings.json` labels ports and sets **`remote.autoForwardPortsSource: hybrid`** so the **Ports** panel lists **8250**, **8251**, **3000**, **3002**, **6335**, **8081** when listeners are up.
 
-Do **not** also run `npm run dev:rehearsal` in a terminal — systemd owns **8251**.
+Do **not** also run `npm run dev` / `npm run dev:rehearsal` in a terminal — systemd owns **8250** (prod `start`) and **8251** (dev). After UI code changes on **:8250**, run `npm run build` in `cxr-ui-prune-rehearsal/cxr-ui` then `systemctl --user restart cxr-atlas-8250`.
 
 Close stale **Simple Browser** tabs on old localhost URLs if you see `GUEST_VIEW_MANAGER_CALL` / `ERR_CONNECTION_REFUSED` in the Cursor terminal (those are not IDE failures).
 
