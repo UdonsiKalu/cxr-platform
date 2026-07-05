@@ -1,0 +1,77 @@
+# SW.9–11 — Prometheus + Grafana + OpenTelemetry (SW.11) + Jaeger
+# Config: observe/prometheus.yml, observe/otel-collector-config.yaml
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../../observe/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../observe/prometheus/cxr_recording_rules.yml:/etc/prometheus/cxr_recording_rules.yml:ro
+      - ../../observe/prometheus/analyzer_targets.json:/etc/prometheus/analyzer_targets.json:ro
+      - prometheus_data:/prometheus
+    networks:
+      - cxr_observe
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: Bbanwo@1980!
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # Single mount: dashboard JSON must live under provisioning/dashboards/ beside default.yml
+      - ../../observe/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - cxr_observe
+
+  jaeger:
+    image: cr.jaegertracing.io/jaegertracing/jaeger:2.19.0
+    restart: unless-stopped
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"
+    networks:
+      - cxr_observe
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yaml"]
+    ports:
+      - "4318:4318"
+      - "4317:4317"
+    volumes:
+      - ../../observe/otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    depends_on:
+      - jaeger
+    networks:
+      - cxr_observe
+
+  # PROF-001 — optional; ./scripts/24-pyroscope-up.sh up
+  pyroscope:
+    image: grafana/pyroscope:1.7.1
+    profiles: ["pyroscope"]
+    restart: unless-stopped
+    ports:
+      - "4040:4040"
+    networks:
+      - cxr_observe
+
+networks:
+  cxr_observe:
+    name: cxr_observe
+
+volumes:
+  prometheus_data:
+  grafana_data:
