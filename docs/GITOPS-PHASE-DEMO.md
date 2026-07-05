@@ -1,1 +1,0 @@
-runbooks/gitops-phase-demo.md

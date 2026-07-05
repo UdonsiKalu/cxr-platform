@@ -1,6 +1,6 @@
 # CXR GraphQL Lab Manual (SW.15)
 
-**PDF:** `docs/CXR-GRAPHQL-LAB-MANUAL.pdf` — `./scripts/build-graphql-manual-pdf.sh`  
+**PDF:** `docs/manuals/graphql/manual.pdf` — `./scripts/build-graphql-manual-pdf.sh`  
 **Syllabus:** SW.15 — Apollo Gateway + two mock subgraphs  
 **Date:** 2026-05-31
 

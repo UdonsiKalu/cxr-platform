@@ -1,9 +1,11 @@
 # Docker build contexts
 
-| Path | Was | Image |
-|------|-----|-------|
-| `ui/Dockerfile` | `Dockerfile` | `cxr-ui:local` (K8 / SW.1) |
-| `ui/Dockerfile.compose` | `Dockerfile.compose` | `cxr-ui:compose` (SW.2) |
-| `analyzer/Dockerfile` | `Dockerfile.analyzer` | `cxr-analyzer:*` |
+| Path | Image |
+|------|-------|
+| `ui/Dockerfile` | `cxr-ui:local` (K8 / SW.1) |
+| `ui/Dockerfile.compose` | `cxr-ui:compose` (SW.2) |
+| `analyzer/Dockerfile` | `cxr-analyzer:*` |
 
-Root symlinks (`Dockerfile.analyzer`, etc.) preserve existing build scripts and CI paths.
+Requirements files: `ui/requirements.txt`, `analyzer/requirements.txt`.
+
+Build scripts and CI use these paths directly (see `scripts/lib/cxr-paths.sh`).

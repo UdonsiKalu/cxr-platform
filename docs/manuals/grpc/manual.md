@@ -1,6 +1,6 @@
 # CXR gRPC Lab Manual (SW.16)
 
-**PDF:** `docs/CXR-GRPC-LAB-MANUAL.pdf` — `./scripts/build-grpc-manual-pdf.sh`  
+**PDF:** `docs/manuals/grpc/manual.pdf` — `./scripts/build-grpc-manual-pdf.sh`  
 **Syllabus:** SW.16 — internal RPC sketch (`Analyze(Claim)`) + grpcui  
 **Date:** 2026-05-31
 

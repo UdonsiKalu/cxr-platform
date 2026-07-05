@@ -1,6 +1,6 @@
 # CXR ELK Lab Manual (SW.12)
 
-**PDF:** `docs/CXR-ELK-LAB-MANUAL.pdf` — build: `./scripts/build-elk-manual-pdf.sh`  
+**PDF:** `docs/manuals/elk/manual.pdf` — build: `./scripts/build-elk-manual-pdf.sh`  
 **Syllabus:** SW.12 — logs (Elasticsearch + Kibana + Filebeat)  
 **Date:** 2026-05-31
 
@@ -72,10 +72,10 @@ Open **http://localhost:5601** (Kibana).
 | `scripts/16-elk-up.sh` | Start stack |
 | `scripts/16-elk-smoke.sh` | Health + index check |
 | `scripts/build-elk-manual-pdf.sh` | Build PDF |
-| `docs/CXR-ELK-LAB-MANUAL.md` / `.tex` / `.pdf` | This manual |
+| `docs/manuals/elk/manual.md` / `.tex` / `.pdf` | This manual |
 | `evidence/SW12-elk-verify-2026-05-29.md` | Verify checklist |
 
-**Touched:** `compose.yaml` (label), `docs/OBSERVE-WIRING.md`, `docs/PLATFORM-SYLLABUS-MAP.md`
+**Touched:** `compose.yaml` (label), `docs/runbooks/observe-wiring.md`, `docs/PLATFORM-SYLLABUS-MAP.md`
 
 ## Port map (relevant)
 
@@ -96,4 +96,4 @@ docker compose -f compose.elk.yaml down
 
 ## After SW.12
 
-Syllabus next: **SW.14 Redis**. See also `docs/CXR-OTEL-LAB-MANUAL.pdf` (SW.11 traces).
+Syllabus next: **SW.14 Redis**. See also `docs/manuals/otel/manual.pdf` (SW.11 traces).

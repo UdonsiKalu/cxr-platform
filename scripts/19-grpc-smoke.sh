@@ -25,7 +25,7 @@ else
   DC=(docker compose)
 fi
 
-"${DC[@]}" -f compose.grpc.yaml exec -T grpc-analysis node client-smoke.mjs
+"${DC[@]}" -f "$ROOT/compose/labs/grpc.yaml" exec -T grpc-analysis node client-smoke.mjs
 
 echo ""
 echo "Browser: http://localhost:8090 → ClaimAnalysis → AnalyzeClaim → claim_id demo-1"

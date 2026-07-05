@@ -1,5 +1,5 @@
 # GATE-001 / SCALE-001 — derived signals for LOAD-003 Grafana + alerts.
-# Mounted into Prometheus via compose.observe.yaml.
+# Mounted into Prometheus via compose/observe/compose.yaml.
 
 groups:
   - name: cxr_load_gate

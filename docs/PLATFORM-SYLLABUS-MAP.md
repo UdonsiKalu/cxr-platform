@@ -5,7 +5,7 @@ From `CXR-Syllabus-Case-Study-Study-Plan.md` **SW.1–SW.18**. This is **what ea
 | SW | Tool | Role in CXR case study | Your status |
 |----|------|------------------------|-------------|
 | **SW.1** | Docker | Package **rehearsal `cxr-ui`** | Done — `cxr-ops-lab/Dockerfile`, image `cxr-ui:local` |
-| **SW.2** | Docker Compose | **UI + Qdrant** (+ mount analyzers) | **Run** — `compose.yaml` + `04-compose-up.sh` |
+| **SW.2** | Docker Compose | **UI + Qdrant** (+ mount analyzers) | **Run** — `compose/core/compose.yaml` + `04-compose-up.sh` |
 | **SW.3** | Kubernetes (`kind`) | Run same image in cluster | Done — `03-k8-up.sh` / `12-k8-ensure.sh`, `:8081` forward |
 | **SW.4** | Helm | Package SW.3 manifests + values | Done — `helm/cxr-ui`, `05-helm-install.sh` |
 | **SW.5** | Terraform | Provision `kind` cluster | Scaffold — `terraform/` + ADR (run `terraform apply` locally) |
@@ -16,13 +16,13 @@ From `CXR-Syllabus-Case-Study-Study-Plan.md` **SW.1–SW.18**. This is **what ea
 | **SW.9** | Prometheus | Scrape HTTP metrics | After app runs in K8/compose |
 | **SW.10** | Grafana | Dashboards on Prometheus | With SW.9 |
 | **SW.11** | OpenTelemetry | Trace browser → API → Qdrant/DB | With SW.9; ties **M1.6** |
-| **SW.12** | ELK | `compose.elk.yaml` + `16-elk-up.sh` → Kibana :5601 | `docs/CXR-ELK-LAB-MANUAL.md` |
+| **SW.12** | ELK | `compose/labs/elk.yaml` + `16-elk-up.sh` → Kibana :5601 | `docs/manuals/elk/manual.md` |
 | **SW.13** | **Kafka** or RabbitMQ | **Async events** (claim submitted, audit done) | **Lab only** — not in current CXR UI path; relates **M5.4** messaging |
-| **SW.14** | Redis | `compose.redis.yaml` + `17-redis-up.sh` → :6379; `lab/redis-cache-aside.sh` | `docs/CXR-REDIS-LAB-MANUAL.md` |
-| **SW.15** | GraphQL | `compose.graphql.yaml` + `18-graphql-up.sh` → gateway :4000 | `docs/CXR-GRAPHQL-LAB-MANUAL.md` |
-| **SW.16** | gRPC | `compose.grpc.yaml` + `19-grpc-up.sh` → :50051 + grpcui :8090 | `docs/CXR-GRPC-LAB-MANUAL.md` |
-| **SW.17** | Vault + K8s secrets | `compose.vault.yaml` + `20-vault-up.sh` → :8200 | `docs/CXR-VAULT-LAB-MANUAL.md` |
-| **SW.18** | Langfuse | `compose.langfuse.yaml` + `21-langfuse-up.sh` → :3100 | `docs/CXR-LANGFUSE-LAB-MANUAL.md` |
+| **SW.14** | Redis | `compose/labs/redis.yaml` + `17-redis-up.sh` → :6379; `lab/redis-cache-aside.sh` | `docs/manuals/redis/manual.md` |
+| **SW.15** | GraphQL | `compose/labs/graphql.yaml` + `18-graphql-up.sh` → gateway :4000 | `docs/manuals/graphql/manual.md` |
+| **SW.16** | gRPC | `compose/labs/grpc.yaml` + `19-grpc-up.sh` → :50051 + grpcui :8090 | `docs/manuals/grpc/manual.md` |
+| **SW.17** | Vault + K8s secrets | `compose/labs/vault.yaml` + `20-vault-up.sh` → :8200 | `docs/manuals/vault/manual.md` |
+| **SW.18** | Langfuse | `compose/labs/langfuse.yaml` + `21-langfuse-up.sh` → :3100 | `docs/manuals/langfuse/manual.md` |
 
 ## Two paths in the syllabus
 

@@ -30,8 +30,8 @@ cd ~/staging/cxr-ops-lab && ./scripts/07-observe-up.sh
 ./scripts/25-synthetic-readiness-up.sh start
 
 # 4) Reload Prometheus after first-time config changes; recreate Grafana if embed env changed
-docker compose -f compose.observe.yaml restart prometheus
-docker compose -f compose.observe.yaml up -d --force-recreate grafana
+docker compose -f compose/observe/compose.yaml restart prometheus
+docker compose -f compose/observe/compose.yaml up -d --force-recreate grafana
 
 # 5) Open
 #    http://localhost:8251/live-ops

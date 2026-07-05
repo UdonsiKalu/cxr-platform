@@ -1,1 +1,0 @@
-runbooks/ci-github.md

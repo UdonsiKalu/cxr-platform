@@ -8,7 +8,7 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.langfuse.yaml up -d
+"${DC[@]}" -f "$ROOT/compose/labs/langfuse.yaml" up -d
 echo ""
 echo "Langfuse UI:   http://localhost:3100  (not CXR :3000)"
 echo "First visit:   sign up → create project → API Keys → lab/langfuse/keys.env"
@@ -16,4 +16,4 @@ echo ""
 echo "Send trace:    node lab/langfuse/send-trace.mjs  (after keys.env)"
 echo "Smoke test:    ./scripts/21-langfuse-smoke.sh"
 echo "Evidence:      evidence/SW18-langfuse-verify-2026-05-31.md"
-echo "Manual:        docs/CXR-LANGFUSE-LAB-MANUAL.pdf (./scripts/build-langfuse-manual-pdf.sh)"
+echo "Manual:        docs/manuals/langfuse/manual.pdf (./scripts/build-langfuse-manual-pdf.sh)"

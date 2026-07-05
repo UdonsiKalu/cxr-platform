@@ -1,6 +1,6 @@
 # CXR Vault Lab Manual (SW.17)
 
-**PDF:** `docs/CXR-VAULT-LAB-MANUAL.pdf` — `./scripts/build-vault-manual-pdf.sh`  
+**PDF:** `docs/manuals/vault/manual.pdf` — `./scripts/build-vault-manual-pdf.sh`  
 **Syllabus:** SW.17 — Vault dev + CXR secret map (M4.3 / M6.7)  
 **Date:** 2026-05-31
 
@@ -55,4 +55,4 @@ docker compose -f compose.vault.yaml down
 
 ## Master wiring doc
 
-Full bootcamp connection map: **`docs/CXR-BOOTCAMP-LABS-COMPENDIUM.pdf`** (chapter 1).
+Full bootcamp connection map: **`docs/manuals/compendium/manual.pdf`** (chapter 1).

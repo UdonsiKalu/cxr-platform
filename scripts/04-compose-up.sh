@@ -6,7 +6,7 @@ ANALYZERS="${CXR_ANALYZERS_HOST:-$ROOT/../cxrlabs-dev/claim_analysis_tools}"
 
 export CXR_UI_SRC="$(cd "$UI_SRC" && pwd)"
 export CXR_ANALYZERS_HOST="$(cd "$ANALYZERS" && pwd)"
-export CXR_OPS_DOCKERFILE="$ROOT/Dockerfile.compose"
+export CXR_OPS_DOCKERFILE="$ROOT/docker/ui/Dockerfile.compose"
 
 if [[ ! -f "$CXR_UI_SRC/package.json" ]]; then
   echo "Missing cxr-ui at $CXR_UI_SRC" >&2
@@ -43,7 +43,7 @@ source "$ROOT/scripts/compose-files.sh"
 cxr_compose_files_init
 COMPOSE_FILES=("${COMPOSE_FILES[@]}")
 if [[ "$COMPOSE_MODE" == host ]]; then
-  echo "Linux (native Docker): compose.host.yaml → host SQL :1433 + Qdrant :6333"
+  echo "Linux (native Docker): compose/core/host.yaml → host SQL :1433 + Qdrant :6333"
 else
   echo "Bridge overlay ($COMPOSE_MODE): published :3000 + host.docker.internal for SQL/Qdrant/Ollama"
 fi
@@ -52,7 +52,7 @@ if [[ "${CXR_SKIP_COMPOSE_BUILD:-}" == "1" ]] && docker image inspect cxr-ui:com
   echo "Skipping image build (CXR_SKIP_COMPOSE_BUILD=1, cxr-ui:compose present)"
 else
   echo "Building cxr-ui:compose (UI $CXR_UI_SRC + lab Dockerfile; first ODBC rebuild ~10–20 min)..."
-  docker build -f "$ROOT/Dockerfile.compose" -t cxr-ui:compose "$CXR_UI_SRC"
+  docker build -f "$ROOT/docker/ui/Dockerfile.compose" -t cxr-ui:compose "$CXR_UI_SRC"
 fi
 PROFILE_ARGS=()
 if [[ "${CXR_COMPOSE_QDRANT:-}" == "1" ]]; then
@@ -66,7 +66,7 @@ echo ""
 echo "Smoke: curl -sI http://localhost:3000/ | head -3"
 curl -sI http://localhost:3000/ | head -3 || true
 echo ""
-echo "Coverage matrix: $ROOT/docs/COMPOSE-CXR-MATRIX.md"
+echo "Coverage matrix: $ROOT/docs/runbooks/compose-matrix.md"
 echo "Claim Studio: analyze + audit/start — host SQL :1433, Qdrant :6333, Ollama :11434"
 echo "If 500: ${DC[*]} ${COMPOSE_FILES[*]} logs cxr-ui"
 echo "Stop: ${DC[*]} ${COMPOSE_FILES[*]} down"

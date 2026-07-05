@@ -8,7 +8,7 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.vault.yaml up -d
+"${DC[@]}" -f "$ROOT/compose/labs/vault.yaml" up -d
 echo ""
 echo "Vault UI/API:  http://localhost:8200"
 echo "Root token:    cxr-bootcamp-root  (dev only)"
@@ -16,4 +16,4 @@ echo ""
 echo "Seed CXR secrets:  ./scripts/20-vault-smoke.sh"
 echo "Secret map:        lab/vault/cxr-secret-map.json"
 echo "Evidence:          evidence/SW17-vault-verify-2026-05-31.md"
-echo "Manual:            docs/CXR-VAULT-LAB-MANUAL.pdf (./scripts/build-vault-manual-pdf.sh)"
+echo "Manual:            docs/manuals/vault/manual.pdf (./scripts/build-vault-manual-pdf.sh)"

@@ -17,7 +17,7 @@ fi
 echo "==> build cxr-ui:local (skip kind load — same Docker daemon)"
 if [[ "${CXR_SKIP_UI_BUILD:-0}" != "1" ]]; then
   UI_SRC="${CXR_UI_SRC:-$ROOT/../cxr-ui-prune-rehearsal/cxr-ui}"
-  docker build -t cxr-ui:local -f "$ROOT/Dockerfile" "$UI_SRC"
+  docker build -t cxr-ui:local -f "$ROOT/docker/ui/Dockerfile" "$UI_SRC"
 else
   echo "  skipping UI build (CXR_SKIP_UI_BUILD=1)"
 fi

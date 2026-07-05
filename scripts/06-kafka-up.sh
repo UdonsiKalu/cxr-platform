@@ -7,7 +7,7 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.kafka.yaml up -d
+"${DC[@]}" -f "$ROOT/compose/labs/kafka.yaml" up -d
 echo ""
 echo "Kafka UI (browser):  http://localhost:8082"
 echo "Kafka broker (CLI):  localhost:9092  (not HTTP — use UI or kafka-topics)"

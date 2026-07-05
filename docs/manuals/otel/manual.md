@@ -1,6 +1,6 @@
 # CXR OpenTelemetry Lab Manual (SW.11)
 
-**PDF:** `./scripts/build-otel-manual-pdf.sh` → `docs/CXR-OTEL-LAB-MANUAL.pdf`  
+**PDF:** `./scripts/build-otel-manual-pdf.sh` → `docs/manuals/otel/manual.pdf`  
 **Syllabus:** Starter milestone **#7**, **SW.11**, ties **M1.6**  
 **Date:** 2026-05-31 (updated — :8251 ↔ Jaeger connection)
 
@@ -114,10 +114,10 @@ Browser
 
 | Path | Role |
 |------|------|
-| `compose.observe.yaml` | + `jaeger`, `otel-collector`, network `cxr_observe` |
+| `compose/observe/compose.yaml` | + `jaeger`, `otel-collector`, network `cxr_observe` |
 | `observe/otel-collector-config.yaml` | Collector: OTLP in → Jaeger out |
 | `.env.otel.example` | Env vars for :8251 / :3000 |
-| `compose.otel-link.yaml` | Optional: compose UI → collector on Docker network |
+| `compose/observe/otel-link.yaml` | Optional: compose UI → collector on Docker network |
 | `scripts/07-observe-up.sh` | Start full observe + OTel stack |
 | `scripts/11-otel-smoke.sh` | Health check |
 | `instrumentation.ts` | Next.js hook; dynamic import of node-only SDK |
@@ -208,7 +208,7 @@ Requires **rebuild** `cxr-ui:compose` after `npm install` + instrumentation in b
 cd cxr-ops-lab
 ./scripts/07-observe-up.sh
 ./scripts/04-compose-up.sh
-docker compose -f compose.yaml -f compose.host.yaml -f compose.otel-link.yaml up -d
+docker compose -f compose/core/compose.yaml -f compose/core/host.yaml -f compose/observe/otel-link.yaml up -d
 ```
 
 Jaeger service name: `cxr-ui-compose`.

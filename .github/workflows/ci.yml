@@ -1,6 +1,6 @@
 # RETIRED — bootcamp CI lives only in cxr-ui-rehearsal
 # https://github.com/UdonsiKalu/cxr-ui-rehearsal/blob/chore/rehearsal-high-risk-batch11/.github/workflows/ci.yml
-# See cxr-ops-lab/docs/BOOTCAMP-CI.md
+# See cxr-ops-lab/docs/runbooks/bootcamp-ci.md
 
 name: cxr-ops-lab-ci-retired
 

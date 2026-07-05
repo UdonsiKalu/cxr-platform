@@ -8,7 +8,7 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.graphql.yaml up -d --build
+"${DC[@]}" -f "$ROOT/compose/labs/graphql.yaml" up -d --build
 echo ""
 echo "GraphQL gateway:  http://localhost:4000/graphql  (Apollo Sandbox in browser)"
 echo "Claims subgraph:  http://localhost:4001/graphql"
@@ -17,4 +17,4 @@ echo ""
 echo "Golden query:     lab/graphql/query-golden.graphql"
 echo "Smoke test:       ./scripts/18-graphql-smoke.sh"
 echo "Evidence:         evidence/SW15-graphql-verify-2026-05-31.md"
-echo "Manual:           docs/CXR-GRAPHQL-LAB-MANUAL.pdf (./scripts/build-graphql-manual-pdf.sh)"
+echo "Manual:           docs/manuals/graphql/manual.pdf (./scripts/build-graphql-manual-pdf.sh)"

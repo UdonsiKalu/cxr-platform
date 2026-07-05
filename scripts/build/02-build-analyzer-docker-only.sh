@@ -11,8 +11,8 @@ if [[ ! -f "$ANALYZER_SRC/analyzer_service_app.py" ]]; then
   exit 1
 fi
 
-cp "$ROOT/requirements-analyzer-docker.txt" "$ANALYZER_SRC/requirements-analyzer-docker.txt"
+cp "$ROOT/docker/analyzer/requirements.txt" "$ANALYZER_SRC/requirements-analyzer-docker.txt"
 
 echo "Building $IMAGE (CPU torch/faiss — may take 15–30 min on first build)..."
-docker build -t "$IMAGE" -f "$ROOT/Dockerfile.analyzer" "$ANALYZER_SRC"
+docker build -t "$IMAGE" -f "$ROOT/docker/analyzer/Dockerfile" "$ANALYZER_SRC"
 echo "Built $IMAGE"

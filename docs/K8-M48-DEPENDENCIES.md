@@ -1,1 +1,0 @@
-runbooks/k8-m48-dependencies.md

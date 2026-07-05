@@ -31,7 +31,7 @@ If `kube-state-metrics` target is **DOWN**:
 
 ```bash
 ./scripts/k8-ksm-port-forward.sh start
-docker compose -f compose.observe.yaml restart prometheus
+docker compose -f compose/observe/compose.yaml restart prometheus
 ```
 
 ## 3. Preflight stack

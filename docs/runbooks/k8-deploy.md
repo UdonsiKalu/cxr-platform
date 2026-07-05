@@ -24,7 +24,7 @@ kubectl port-forward -n cxr-ui svc/cxr-ui 8081:3000 --address=127.0.0.1
 | http://localhost:8081 | CXR UI (K8) |
 | https://localhost:8083 | Argo CD UI |
 
-Persistent access: `systemctl --user enable --now cxr-k8-forward` (see `docs/PERSISTENT-PORTS.md`).
+Persistent access: `systemctl --user enable --now cxr-k8-forward` (see `persistent-ports.md`).
 
 ## Layered syllabus map
 
@@ -41,7 +41,7 @@ Persistent access: `systemctl --user enable --now cxr-k8-forward` (see `docs/PER
 
 **One-shot:** `03-k8-up.sh` = cluster + build/load + Helm deploy (UI only).
 
-**Full stack (UI + analyzer + HPA):** `03-k8-stack-up.sh` — see [`docs/K8-STACK-DEPLOY.md`](K8-STACK-DEPLOY.md).
+**Full stack (UI + analyzer + HPA):** `03-k8-stack-up.sh` — see [`k8-stack-deploy.md`](k8-stack-deploy.md).
 
 ## Ports (do not confuse)
 
@@ -55,16 +55,16 @@ Pod listens on **3000 inside the cluster**; forward maps it to the host.
 
 ## Dependencies (M4.8)
 
-SQL Server, Qdrant, and Python analyzers are **out-of-cluster** for bootcamp K8. The SW.1 image in the pod is UI-only; full Claim Studio analyze uses **:8251** or **:3000** Compose. See `docs/K8-M48-DEPENDENCIES.md`.
+SQL Server, Qdrant, and Python analyzers are **out-of-cluster** for bootcamp K8. The SW.1 image in the pod is UI-only; full Claim Studio analyze uses **:8251** or **:3000** Compose. See `k8-m48-dependencies.md`.
 
 ## Full manual (PDF)
 
-- **Markdown:** `docs/CXR-K8-DEPLOYMENT-MANUAL.md`
-- **LaTeX PDF:** `docs/CXR-K8-DEPLOYMENT-MANUAL.pdf` — build with `./scripts/build-k8-manual-pdf.sh`
+- **Markdown:** `docs/manuals/k8/manual.md`
+- **LaTeX PDF:** `docs/manuals/k8/manual.pdf` — build with `./scripts/build-k8-manual-pdf.sh`
 
 ## OpenTelemetry (SW.11)
 
-- **Lab manual:** `docs/CXR-OTEL-LAB-MANUAL.md` / `.pdf` — `./scripts/build-otel-manual-pdf.sh`
+- **Lab manual:** `docs/manuals/otel/manual.md` / `.pdf` — `./scripts/build-otel-manual-pdf.sh`
 - **Stack:** `./scripts/07-observe-up.sh` (Prometheus, Grafana, Jaeger, OTel Collector)
 - **Env:** `.env.otel.example`
 

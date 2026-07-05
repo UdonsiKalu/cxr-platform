@@ -32,4 +32,4 @@
 
 <!-- Link to cxr-portfolio study under investigations/kubernetes-analyzer-saturation/studies/ -->
 <!-- PR index: docs/investigations/README.md -->
-<!-- Naming rules: docs/GITHUB-NAMING-STANDARDS.md -->
+<!-- Naming rules: docs/standards/GITHUB-NAMING-STANDARDS.md -->

@@ -1,1 +1,0 @@
-runbooks/bootcamp-ci.md

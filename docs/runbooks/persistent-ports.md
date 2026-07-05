@@ -37,8 +37,8 @@ Close stale **Simple Browser** tabs on old localhost URLs if you see `GUEST_VIEW
 
 ## Docker Desktop on Linux
 
-`04-compose-up.sh` auto-selects **`compose.bridge.yaml`** (published **3000:3000**).  
-Do **not** rely on `compose.host.yaml` on Desktop — `network_mode: host` binds inside the VM.
+`04-compose-up.sh` auto-selects **`compose/core/bridge.yaml`** (published **3000:3000**).  
+Do **not** rely on `compose/core/host.yaml` on Desktop — `network_mode: host` binds inside the VM.
 
 ## Commands
 

@@ -72,7 +72,7 @@ kubectl get pods -n cxr-ui -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.
 gh run list --repo UdonsiKalu/cxr-ops-lab --workflow=build-k8-images.yml --limit 3
 ```
 
-See `docs/BOOTCAMP-CI.md` for secret setup.
+See `bootcamp-ci.md` for secret setup.
 
 ---
 

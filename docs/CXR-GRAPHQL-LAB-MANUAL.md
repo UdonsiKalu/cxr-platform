@@ -1,1 +1,0 @@
-manuals/graphql/manual.md

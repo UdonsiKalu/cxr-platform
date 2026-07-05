@@ -68,8 +68,8 @@ flowchart TB
 |------|---------|
 | `helm/cxr-analyzer/` | Analyzer Deployment, Service, **HPA** |
 | `helm/cxr-ui/` | UI Deployment, Service, **HPA**, `ANALYZER_URL` |
-| `Dockerfile.analyzer` | Analyzer container (CPU torch/faiss/ODBC) |
-| `requirements-analyzer-docker.txt` | Pip deps for analyzer image |
+| `docker/analyzer/Dockerfile` | Analyzer container (CPU torch/faiss/ODBC) |
+| `docker/analyzer/requirements.txt` | Pip deps for analyzer image |
 | `kind/cxr-lab.yaml` | kind config + **host.docker.internal** |
 | `scripts/03-k8-stack-up.sh` | One-shot deploy |
 | `scripts/02-build-analyzer-and-load.sh` | Build/load `cxr-analyzer:local` |

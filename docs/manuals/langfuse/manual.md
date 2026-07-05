@@ -1,6 +1,6 @@
 # CXR Langfuse Lab Manual (SW.18)
 
-**PDF:** `docs/CXR-LANGFUSE-LAB-MANUAL.pdf` — `./scripts/build-langfuse-manual-pdf.sh`  
+**PDF:** `docs/manuals/langfuse/manual.pdf` — `./scripts/build-langfuse-manual-pdf.sh`  
 **Syllabus:** SW.18 — LLM trace + eval (M7.8)  
 **Date:** 2026-05-31
 
@@ -60,5 +60,5 @@ docker compose -f compose.langfuse.yaml down
 
 ## Related
 
-- Master wiring: `docs/CXR-BOOTCAMP-LABS-COMPENDIUM.pdf`
+- Master wiring: `docs/manuals/compendium/manual.pdf`
 - SW.12–SW.18 electives complete in `cxr-ops-lab`

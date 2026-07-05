@@ -1,1 +1,0 @@
-standards/GITHUB-NAMING-STANDARDS.md

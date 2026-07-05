@@ -4,7 +4,7 @@ Thank you for working in the CXR ops lab. This repo holds Docker/Kubernetes, obs
 
 ## Before you open a PR
 
-1. Read **[docs/GITHUB-NAMING-STANDARDS.md](docs/GITHUB-NAMING-STANDARDS.md)** — branch names, PR titles, commits, and body structure.  
+1. Read **[docs/standards/GITHUB-NAMING-STANDARDS.md](docs/standards/GITHUB-NAMING-STANDARDS.md)** — branch names, PR titles, commits, and body structure.  
 2. Use the **[pull request template](.github/pull_request_template.md)** — lead with **why**, not file lists.  
 3. Link investigation write-ups in **[cxr-portfolio](https://github.com/UdonsiKalu/cxr-portfolio)** when applicable.
 
@@ -25,7 +25,7 @@ Thank you for working in the CXR ops lab. This repo holds Docker/Kubernetes, obs
 
 ## Study / evidence PRs
 
-Performance and observability investigations use type **`study`** and IDs like **`PERF-008`**, **`OBS-003`**. Full rules and examples: [docs/GITHUB-NAMING-STANDARDS.md](docs/GITHUB-NAMING-STANDARDS.md).
+Performance and observability investigations use type **`study`** and IDs like **`PERF-008`**, **`OBS-003`**. Full rules and examples: [docs/standards/GITHUB-NAMING-STANDARDS.md](docs/standards/GITHUB-NAMING-STANDARDS.md).
 
 ## Local development
 

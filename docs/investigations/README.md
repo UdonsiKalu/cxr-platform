@@ -58,6 +58,6 @@ main
 | **Dated journal entry** | `cxr-portfolio/CHANGELOG.md` |
 | **PR ↔ branch ↔ doc index** | This file |
 | **Naming rules** | [GITHUB-NAMING-STANDARDS.md](../GITHUB-NAMING-STANDARDS.md) |
-| **Runbook / reproduce** | `docs/K8-LOAD-OBSERVE-RUNBOOK.md`, `scripts/` |
+| **Runbook / reproduce** | `docs/runbooks/k8-load-observe.md`, `scripts/` |
 
 When closing a study: update the study `.md`, evidence folder, one CHANGELOG line, and the PR body link to the study doc.

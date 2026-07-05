@@ -8,7 +8,7 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.elk.yaml up -d
+"${DC[@]}" -f "$ROOT/compose/labs/elk.yaml" up -d
 echo ""
 echo "Elasticsearch:  http://localhost:9200"
 echo "Kibana UI:      http://localhost:5601"

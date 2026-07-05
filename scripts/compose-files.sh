@@ -20,17 +20,20 @@ cxr_compose_dc() {
 # Sets: ROOT, COMPOSE_FILES (array), COMPOSE_MODE (host|bridge)
 cxr_compose_files_init() {
   ROOT="$(cxr_compose_root)"
-  COMPOSE_FILES=(-f "$ROOT/compose.yaml")
+  # shellcheck source=lib/cxr-paths.sh
+  source "$ROOT/scripts/lib/cxr-paths.sh"
+  cxr_paths_init
+  COMPOSE_FILES=(-f "$CXR_COMPOSE_CORE")
   local os
   os="$(docker info --format '{{.OperatingSystem}}' 2>/dev/null || true)"
   if grep -qi 'Docker Desktop' <<<"$os"; then
-    COMPOSE_FILES+=(-f "$ROOT/compose.bridge.yaml")
+    COMPOSE_FILES+=(-f "$CXR_COMPOSE_BRIDGE")
     COMPOSE_MODE=bridge
   elif [[ "$(uname -s)" == "Linux" ]]; then
-    COMPOSE_FILES+=(-f "$ROOT/compose.host.yaml")
+    COMPOSE_FILES+=(-f "$CXR_COMPOSE_HOST")
     COMPOSE_MODE=host
   else
-    COMPOSE_FILES+=(-f "$ROOT/compose.bridge.yaml")
+    COMPOSE_FILES+=(-f "$CXR_COMPOSE_BRIDGE")
     COMPOSE_MODE=bridge
   fi
 }
