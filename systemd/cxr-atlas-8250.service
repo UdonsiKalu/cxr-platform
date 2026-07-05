@@ -1,0 +1,17 @@
+[Unit]
+Description=CXR Atlas UI on port 8250 (next start, rehearsal tree)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-ui-prune-rehearsal/cxr-ui
+Environment=PATH=/home/udonsi-kalu/.nvm/versions/node/v20.19.5/bin:/usr/local/bin:/usr/bin:/bin
+Environment=NODE_ENV=production
+ExecStart=/home/udonsi-kalu/staging/cxr-ui-prune-rehearsal/cxr-ui/scripts/run-atlas-8250.sh
+Restart=always
+RestartSec=10
+StandardOutput=append:/tmp/cxr-atlas-8250.log
+StandardError=append:/tmp/cxr-atlas-8250.log
+
+[Install]
+WantedBy=cxr-lab.target
