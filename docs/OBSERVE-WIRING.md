@@ -52,6 +52,22 @@ Manual: `docs/CXR-OTEL-LAB-MANUAL.pdf` (`./scripts/build-otel-manual-pdf.sh`).
 
 Manual: `docs/CXR-ELK-LAB-MANUAL.pdf` (`./scripts/build-elk-manual-pdf.sh`) · Evidence: `evidence/SW12-elk-verify-2026-05-29.md`
 
+## Live Operations Center (synthetic readiness)
+
+| URL | Role |
+|-----|------|
+| http://localhost:8251/live-ops | CXR site embed (Grafana solo panels) |
+| http://localhost:3001/d/cxr-live-ops/cxr-live-operations-center | Full **CXR Live Operations Center** dashboard |
+| http://localhost:9103/metrics | Synthetic `synthetic_*` metrics exporter |
+
+```bash
+./scripts/25-synthetic-readiness-up.sh start   # after :8251 + :8766 up
+docker compose -f compose.observe.yaml restart prometheus
+docker compose -f compose.observe.yaml up -d --force-recreate grafana  # embed env (not restart-only)
+```
+
+Runbook: [docs/operations/live-operations-center.md](operations/live-operations-center.md)
+
 ## Persistence
 
 - Volumes: `grafana_data`, `prometheus_data`, `elk_es_data`

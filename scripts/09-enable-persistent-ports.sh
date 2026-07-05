@@ -4,8 +4,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 USER_SYSTEMD="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 mkdir -p "$USER_SYSTEMD"
 
-echo "== CXR persistent ports (:8251 :3000 :3002 :6335 :8081 :9090 :3001) =="
+echo "== CXR persistent ports (:8250 :8251 :3000 :3002 :6335 :8081 :9090 :3001) =="
 echo "Installing user systemd units..."
+cp "$ROOT/systemd/cxr-atlas-8250.service" "$USER_SYSTEMD/"
+chmod +x "$ROOT/../cxr-ui-prune-rehearsal/cxr-ui/scripts/run-atlas-8250.sh" 2>/dev/null || true
 cp "$ROOT/systemd/cxr-ops-lab-compose.service" "$USER_SYSTEMD/"
 cp "$ROOT/systemd/cxr-sw1-test.service" "$USER_SYSTEMD/"
 cp "$ROOT/systemd/cxr-k8-forward.service" "$USER_SYSTEMD/"
@@ -39,7 +41,7 @@ fi
 loginctl enable-linger "$USER" 2>/dev/null || true
 systemctl --user daemon-reload
 systemctl --user enable cxr-lab.target
-systemctl --user enable cxr-rehearsal-dev.service cxr-ops-lab-compose.service cxr-sw1-test.service cxr-k8-forward.service cxr-observe.service
+systemctl --user enable cxr-atlas-8250.service cxr-rehearsal-dev.service cxr-ops-lab-compose.service cxr-sw1-test.service cxr-k8-forward.service cxr-observe.service
 
 echo "Starting cxr-lab.target (compose + SW.1 + K8 forward; may take minutes on first boot)..."
 systemctl --user start cxr-lab.target
