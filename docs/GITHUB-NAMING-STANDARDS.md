@@ -85,6 +85,7 @@ Standard (Conventional Commits): `feat`, `fix`, `docs`, `style`, `refactor`, `pe
 - Include investigation ID when one exists (`perf-008`, `obs-003`)
 - Do not mix unrelated IDs (e.g. `perf009` slug for an `OBS-003` fix)
 - Avoid bare `feature/` — use `feat/` or `study/` for clarity
+- **Renaming a branch closes its open PR** on GitHub — rename before opening a PR, or open a new PR from the renamed branch (see investigations README note on #1–#3 → #6–#8)
 
 ---
 

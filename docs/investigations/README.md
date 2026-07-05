@@ -12,10 +12,13 @@ Open performance/observability PRs are **one arc split for review**, not three u
 
 | PR | Branch | Title (standard) | ID | Deep doc |
 |----|--------|------------------|-----|----------|
-| [#4](https://github.com/UdonsiKalu/cxr-platform/pull/4) ✅ | `feat/live-ops-synthetic-stream` | `feat(live-ops): add synthetic traffic stream and Fault Gym orchestration` | — | [live-operations-center.md](../operations/live-operations-center.md) |
-| [#1](https://github.com/UdonsiKalu/cxr-platform/pull/1) | `study/perf-008-keda-ab-backpressure` | `feat(k8s): add KEDA A/B harness and fix replica metrics in load gate [PERF-008]` | PERF-008 | [PERF-008 study](https://github.com/UdonsiKalu/cxr-portfolio/blob/master/investigations/kubernetes-analyzer-saturation/studies/PERF-008-queue-depth-autoscaling.md) |
-| [#2](https://github.com/UdonsiKalu/cxr-platform/pull/2) | `study/perf-009-jaeger-tail-latency` | `study(observe): document Jaeger tail latency attribution at 200 users [PERF-009]` | PERF-009 | [PERF-009 study](https://github.com/UdonsiKalu/cxr-portfolio/blob/master/investigations/kubernetes-analyzer-saturation/studies/PERF-009-jaeger-tail-latency.md) |
-| [#3](https://github.com/UdonsiKalu/cxr-platform/pull/3) | `fix/obs-003-shared-sql-connection` | `fix(analyzer): prevent shared SQL connection errors under concurrent load [OBS-003]` | OBS-003 | [OBS-003 study](https://github.com/UdonsiKalu/cxr-portfolio/blob/master/investigations/kubernetes-analyzer-saturation/studies/OBS-003-shared-sql-connection.md) |
+| [#4](https://github.com/UdonsiKalu/cxr-platform/pull/4) ✅ | `feat/live-ops-stream` | `feat(live-ops): synthetic stream, Fault Gym orchestration, observe wiring` | — | [live-operations-center.md](../operations/live-operations-center.md) |
+| [#6](https://github.com/UdonsiKalu/cxr-platform/pull/6) | `study/perf-008-keda-ab-backpressure` | `feat(k8s): add KEDA A/B harness and fix replica metrics in load gate [PERF-008]` | PERF-008 | [PERF-008 study](https://github.com/UdonsiKalu/cxr-portfolio/blob/master/investigations/kubernetes-analyzer-saturation/studies/PERF-008-queue-depth-autoscaling.md) |
+| [#7](https://github.com/UdonsiKalu/cxr-platform/pull/7) | `study/perf-009-jaeger-tail-latency` | `study(observe): document Jaeger tail latency attribution at 200 users [PERF-009]` | PERF-009 | [PERF-009 study](https://github.com/UdonsiKalu/cxr-portfolio/blob/master/investigations/kubernetes-analyzer-saturation/studies/PERF-009-jaeger-tail-latency.md) |
+| [#8](https://github.com/UdonsiKalu/cxr-platform/pull/8) | `fix/obs-003-shared-sql-connection` | `fix(analyzer): prevent shared SQL connection errors under concurrent load [OBS-003]` | OBS-003 | [OBS-003 study](https://github.com/UdonsiKalu/cxr-portfolio/blob/master/investigations/kubernetes-analyzer-saturation/studies/OBS-003-shared-sql-connection.md) |
+| [#5](https://github.com/UdonsiKalu/cxr-platform/pull/5) | `chore/github-naming-standards` | `docs(github): add naming standards and PR title check workflow` | — | [GITHUB-NAMING-STANDARDS.md](../GITHUB-NAMING-STANDARDS.md) |
+
+> **Note:** PRs #1–#3 were closed when branches were renamed (2026-07-05). Use #6–#8 for the investigation arc.
 
 ---
 
@@ -23,14 +26,14 @@ Open performance/observability PRs are **one arc split for review**, not three u
 
 ```
 main
- └── PR #1  study/perf-008-keda-ab-backpressure
-      └── PR #2  study/perf-009-jaeger-tail-latency
-           └── PR #3  fix/obs-003-shared-sql-connection
+ └── PR #6  study/perf-008-keda-ab-backpressure
+      └── PR #7  study/perf-009-jaeger-tail-latency
+           └── PR #8  fix/obs-003-shared-sql-connection
 ```
 
 - Each PR targets **`main`**, not the previous PR branch.
 - Later branches **contain** earlier commits (cumulative), so file lists overlap.
-- **Merge order:** #1 → #2 → #3, **or** merge #3 only and close #1/#2.
+- **Merge order:** #6 → #7 → #8, **or** merge #8 only and close #6/#7.
 
 ---
 
