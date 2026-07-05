@@ -1,1 +1,0 @@
-runbooks/observe-wiring.md

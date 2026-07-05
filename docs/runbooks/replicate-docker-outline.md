@@ -25,14 +25,14 @@ See **`docs/COMPOSE-CXR-MATRIX.md`** for what is / is not in compose vs :8251.
 | 2 | `./scripts/04-compose-up.sh` | `docker compose ps` both healthy |
 | 3 | Open `http://localhost:3000` | Home loads |
 | 4 | Open Claim Studio, Run analysis | F12: `POST /api/claim-studio/analyze` |
-| 5 | If 500: `docker compose -f compose.yaml -f compose.host.yaml logs cxr-ui` | SQL/Qdrant on host? ODBC in image? |
+| 5 | If 500: `docker compose -f compose/core/compose.yaml -f compose/core/host.yaml logs cxr-ui` | SQL/Qdrant on host? ODBC in image? |
 
 **What compose adds:**
 
 - **qdrant** service (optional sidecar on **:6335**); with **Linux host overlay**, analyze uses **host** Qdrant **:6333**
 - **volume** host `claim_analysis_tools` → `/analyzers` in container
 - **env** `CXR_ANALYZER_SCRIPT=/analyzers/analyze_sample.py`
-- **`compose.host.yaml`** (Linux): `network_mode: host` so spawned Python reaches **127.0.0.1:1433** SQL like :8251
+- **`compose/core/host.yaml`** (Linux): `network_mode: host` so spawned Python reaches **127.0.0.1:1433** SQL like :8251
 - **Dockerfile.compose**: `python3`, **ODBC Driver 17**, `pyodbc`, `qdrant-client`
 
 **One API path (memorize):**
@@ -64,7 +64,7 @@ K8 deploy today = **UI shell** unless you add the same volume/env as compose to 
 ## D. Your checklist (copy into Personal notes)
 
 - [ ] SW.1 `docker build` log saved  
-- [ ] SW.2 `compose.yaml` + `docker compose ps` screenshot  
+- [ ] SW.2 `compose/core/compose.yaml` + `docker compose ps` screenshot  
 - [ ] One API traced in F12 on **:3000** (compose) and **:8251** (dev)  
 - [ ] SW.3 `kubectl get all` + URL note  
 - [ ] ADR: “analyze in container uses mount, not baked Python tree”

@@ -1,1 +1,0 @@
-adrs/ADR-SW5-terraform-kind.md

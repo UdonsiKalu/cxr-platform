@@ -1,6 +1,6 @@
 # CXR Redis Lab Manual (SW.14)
 
-**PDF:** `docs/CXR-REDIS-LAB-MANUAL.pdf` — build: `./scripts/build-redis-manual-pdf.sh`  
+**PDF:** `docs/manuals/redis/manual.pdf` — build: `./scripts/build-redis-manual-pdf.sh`  
 **Syllabus:** SW.14 — Redis cache-aside + Redis Insight UI  
 **Date:** 2026-05-31 (Redis Insight baked in)
 
@@ -54,7 +54,7 @@ cd cxr-ops-lab
 | `scripts/17-redis-up.sh` | Start stack |
 | `scripts/17-redis-smoke.sh` | PING + Insight + cache-aside |
 | `scripts/build-redis-manual-pdf.sh` | Build PDF |
-| `docs/CXR-REDIS-LAB-MANUAL.{md,tex,pdf}` | This manual |
+| `docs/manuals/redis/manual.{md,tex,pdf}` | This manual |
 | `docs/diagrams/06-redis-cache-aside.mmd` | Sequence diagram |
 | `evidence/SW14-redis-verify-2026-05-31.md` | Checklist |
 | `evidence/SW14-redis-insight-2026-05-31.png` | UI evidence |

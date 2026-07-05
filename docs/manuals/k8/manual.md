@@ -1,6 +1,6 @@
 # CXR Kubernetes Deployment Manual (Markdown summary)
 
-**PDF version:** run `./scripts/build-k8-manual-pdf.sh` → `docs/CXR-K8-DEPLOYMENT-MANUAL.pdf`  
+**PDF version:** run `./scripts/build-k8-manual-pdf.sh` → `docs/manuals/k8/manual.pdf`  
 **GitHub:** https://github.com/UdonsiKalu/cxr-ops-lab  
 **Date:** 2026-05-28
 

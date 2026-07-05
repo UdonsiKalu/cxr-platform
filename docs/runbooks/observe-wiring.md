@@ -2,7 +2,7 @@
 
 | File | Role |
 |------|------|
-| **`compose.observe.yaml`** | Docker Compose — Prometheus, Grafana, **Jaeger**, **otel-collector** |
+| **`compose/observe/compose.yaml`** | Docker Compose — Prometheus, Grafana, **Jaeger**, **otel-collector** |
 | **`observe/prometheus.yml`** | Prometheus scrape config |
 | **`observe/otel-collector-config.yaml`** | Collector receives OTLP, exports to Jaeger |
 | **`observe/grafana/provisioning/`** | Grafana datasources + dashboards |
@@ -30,7 +30,7 @@
 ./scripts/11-otel-smoke.sh
 ```
 
-Manual: `docs/CXR-OTEL-LAB-MANUAL.pdf` (`./scripts/build-otel-manual-pdf.sh`).
+Manual: `docs/manuals/otel/manual.pdf` (`./scripts/build-otel-manual-pdf.sh`).
 
 ## Connection to rehearsal
 
@@ -50,7 +50,7 @@ Manual: `docs/CXR-OTEL-LAB-MANUAL.pdf` (`./scripts/build-otel-manual-pdf.sh`).
 ./scripts/16-elk-smoke.sh
 ```
 
-Manual: `docs/CXR-ELK-LAB-MANUAL.pdf` (`./scripts/build-elk-manual-pdf.sh`) · Evidence: `evidence/SW12-elk-verify-2026-05-29.md`
+Manual: `docs/manuals/elk/manual.pdf` (`./scripts/build-elk-manual-pdf.sh`) · Evidence: `evidence/SW12-elk-verify-2026-05-29.md`
 
 ## Live Operations Center (synthetic readiness)
 
@@ -62,8 +62,8 @@ Manual: `docs/CXR-ELK-LAB-MANUAL.pdf` (`./scripts/build-elk-manual-pdf.sh`) · E
 
 ```bash
 ./scripts/25-synthetic-readiness-up.sh start   # after :8251 + :8766 up
-docker compose -f compose.observe.yaml restart prometheus
-docker compose -f compose.observe.yaml up -d --force-recreate grafana  # embed env (not restart-only)
+docker compose -f compose/observe/compose.yaml restart prometheus
+docker compose -f compose/observe/compose.yaml up -d --force-recreate grafana  # embed env (not restart-only)
 ```
 
 Runbook: [docs/operations/live-operations-center.md](operations/live-operations-center.md)

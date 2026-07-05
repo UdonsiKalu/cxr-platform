@@ -1,1 +1,0 @@
-runbooks/k8-load-observe.md
