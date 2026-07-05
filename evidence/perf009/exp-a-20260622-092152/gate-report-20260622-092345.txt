@@ -1,0 +1,5 @@
+CXR LOAD GATE — 20260622-092345 (cumulative)
+Report: /home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf009/exp-a-20260622-092152/gate-report-20260622-092345.json
+  [PASS] users=100 rps=49.9 p95=580ms collapses=0
+  [PASS] users=150 rps=74.2 p95=770ms collapses=0
+  [PASS] users=200 rps=91.2 p95=1000ms collapses=0

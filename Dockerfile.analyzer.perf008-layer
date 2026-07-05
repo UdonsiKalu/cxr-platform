@@ -1,0 +1,13 @@
+# PERF-008 — patch existing cxr-analyzer:perf003 (CPU image) with /metrics only.
+# Avoids 15–30 min full torch/faiss rebuild. Base image is CPU torch + faiss-cpu (no GPU).
+#
+# Build:
+#   CXR_ANALYZER_IMAGE=cxr-analyzer:perf003 ./scripts/02-build-analyzer-perf008-layer.sh
+
+FROM cxr-analyzer:perf003
+
+WORKDIR /app
+
+COPY analyzer_metrics.py analyzer_service_app.py /app/
+
+RUN pip install --no-cache-dir 'prometheus-client>=0.20.0'
