@@ -1,13 +1,1 @@
-# Optional — Docker bridge instead of host network (e.g. non-Linux or no host SQL on :1433)
-# Use: docker compose -f compose.yaml -f compose.bridge.yaml up -d
-
-services:
-  cxr-ui:
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      QDRANT_URL: http://host.docker.internal:6333
-      CXR_SQL_SERVER: host.docker.internal,1433
-      OLLAMA_HOST: http://host.docker.internal:11434
-      CXR_GATEWAY_URL: http://host.docker.internal:8181
-      CXR_API_BASE: http://host.docker.internal:8281
+compose/core/bridge.yaml

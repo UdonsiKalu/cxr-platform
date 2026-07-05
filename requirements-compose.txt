@@ -1,3 +1,1 @@
-# Minimal Python deps for claim-studio/analyze in cxr-ui:compose (lab only).
-pyodbc>=5.0
-qdrant-client>=1.7
+docker/ui/requirements.txt
