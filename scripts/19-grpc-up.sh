@@ -8,9 +8,9 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.grpc.yaml up -d --build
+"${DC[@]}" -f "$ROOT/compose/labs/grpc.yaml" up -d --build
 # grpcui can crash if it starts before reflection is registered — ensure clean attach.
-"${DC[@]}" -f compose.grpc.yaml restart grpc-ui 2>/dev/null || true
+"${DC[@]}" -f "$ROOT/compose/labs/grpc.yaml" restart grpc-ui 2>/dev/null || true
 sleep 3
 echo ""
 echo "gRPC server:  localhost:50051  (ClaimAnalysis)"
@@ -19,4 +19,4 @@ echo ""
 echo "Golden RPC:   GetClaimStatus claim_id=demo-1; AnalyzeClaim (see lab/grpc/request-golden.json)"
 echo "Smoke test:   ./scripts/19-grpc-smoke.sh"
 echo "Evidence:     evidence/SW16-grpc-verify-2026-05-31.md"
-echo "Manual:       docs/CXR-GRPC-LAB-MANUAL.pdf (./scripts/build-grpc-manual-pdf.sh)"
+echo "Manual:       docs/manuals/grpc/manual.pdf (./scripts/build-grpc-manual-pdf.sh)"

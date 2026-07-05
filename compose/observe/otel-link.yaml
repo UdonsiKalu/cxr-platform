@@ -1,5 +1,5 @@
 # Optional overlay: send compose cxr-ui traces to otel-collector on cxr_observe network.
-# Usage: docker compose -f compose.yaml -f compose.host.yaml -f compose.otel-link.yaml up -d
+# Usage: docker compose -f compose/core/compose.yaml -f compose/core/host.yaml -f compose/observe/otel-link.yaml up -d
 # Requires: ./scripts/07-observe-up.sh first (creates network cxr_observe).
 
 services:

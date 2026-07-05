@@ -1,5 +1,5 @@
 # CI extend (ops-lab): validate Helm/GitOps; optional full analyzer image build.
-# Canonical app CI remains cxr-ui-rehearsal — see docs/BOOTCAMP-CI.md
+# Canonical app CI remains cxr-ui-rehearsal — see docs/runbooks/bootcamp-ci.md
 #
 # Full Docker build needs analyzer source (not in this repo). Locally:
 #   CXR_ANALYZER_SRC=../cxrlabs-dev/claim_analysis_tools ./scripts/02-build-analyzer-docker-only.sh
@@ -10,15 +10,13 @@ on:
   push:
     branches: [main]
     paths:
-      - 'Dockerfile.analyzer'
-      - 'requirements-analyzer-docker.txt'
+      - 'docker/analyzer/**'
       - 'helm/**'
       - '.github/workflows/build-k8-images.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'Dockerfile.analyzer'
-      - 'requirements-analyzer-docker.txt'
+      - 'docker/analyzer/**'
       - 'helm/**'
       - '.github/workflows/build-k8-images.yml'
   workflow_dispatch:
@@ -47,8 +45,8 @@ jobs:
         run: |
           helm lint helm/cxr-analyzer
           helm lint helm/cxr-ui
-          test -f Dockerfile.analyzer
-          test -f requirements-analyzer-docker.txt
+          test -f docker/analyzer/Dockerfile
+          test -f docker/analyzer/requirements.txt
           echo "Helm charts + analyzer Dockerfile present — GitOps validate OK"
 
   build-analyzer-image:
@@ -76,8 +74,8 @@ jobs:
 
       - name: Build cxr-analyzer image (smoke)
         run: |
-          cp ops-lab/requirements-analyzer-docker.txt analyzer-src/requirements-analyzer-docker.txt
-          docker build -f ops-lab/Dockerfile.analyzer -t cxr-analyzer:ci-${{ github.sha }} analyzer-src
+          cp ops-lab/docker/analyzer/requirements.txt analyzer-src/requirements-analyzer-docker.txt
+          docker build -f ops-lab/docker/analyzer/Dockerfile -t cxr-analyzer:ci-${{ github.sha }} analyzer-src
           docker image inspect cxr-analyzer:ci-${{ github.sha }} >/dev/null
           echo "Analyzer image build OK"
 

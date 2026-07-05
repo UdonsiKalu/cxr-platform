@@ -1,4 +1,4 @@
-# Enforce Conventional Commits-style PR titles (see docs/GITHUB-NAMING-STANDARDS.md).
+# Enforce Conventional Commits-style PR titles (see docs/standards/GITHUB-NAMING-STANDARDS.md).
 name: pr-title-check
 
 on:
@@ -22,7 +22,7 @@ jobs:
             echo "Expected: type(scope): outcome in plain English [ID]"
             echo "Example:  fix(analyzer): prevent shared SQL connection errors under concurrent load [OBS-003]"
             echo ""
-            echo "Docs: docs/GITHUB-NAMING-STANDARDS.md"
+            echo "Docs: docs/standards/GITHUB-NAMING-STANDARDS.md"
             echo "Got:  $PR_TITLE"
             exit 1
           fi

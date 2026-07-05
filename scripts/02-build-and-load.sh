@@ -14,6 +14,6 @@ if [[ ! -f "$UI_SRC/package.json" ]]; then
 fi
 
 echo "Building $IMAGE from $UI_SRC (this may take several minutes)..."
-docker build -t "$IMAGE" -f "$ROOT/Dockerfile" "$UI_SRC"
+docker build -t "$IMAGE" -f "$ROOT/docker/ui/Dockerfile" "$UI_SRC"
 load_image_to_cluster "$IMAGE" "$ROOT"
 echo "Image $IMAGE ready for cluster ($(cxr_k8_runtime))"

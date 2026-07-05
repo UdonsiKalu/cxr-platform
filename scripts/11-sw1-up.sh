@@ -18,7 +18,7 @@ done
 
 if ! docker image inspect "$IMAGE" &>/dev/null; then
   echo "Building $IMAGE (first run may take several minutes)..."
-  docker build -t "$IMAGE" -f "$ROOT/Dockerfile" "$UI_SRC"
+  docker build -t "$IMAGE" -f "$ROOT/docker/ui/Dockerfile" "$UI_SRC"
 fi
 
 if docker ps -a --format '{{.Names}}' | grep -qx "$NAME"; then

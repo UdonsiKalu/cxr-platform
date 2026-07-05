@@ -19,13 +19,17 @@ for s in build-otel-manual-pdf.sh build-elk-manual-pdf.sh build-kafka-manual-pdf
 done
 
 echo "== build-bootcamp-compendium-pdf.sh =="
-DOC="$ROOT/docs/CXR-BOOTCAMP-LABS-COMPENDIUM"
-cd "$ROOT/docs"
-pdflatex -interaction=nonstopmode "$(basename "$DOC").tex" >/dev/null || true
-pdflatex -interaction=nonstopmode "$(basename "$DOC").tex" >/dev/null || true
-[[ -f "$DOC.pdf" ]] || { echo "Compendium PDF build failed." >&2; exit 1; }
-echo "Built: $DOC.pdf ($(wc -c < "$DOC.pdf") bytes)"
+# shellcheck source=lib/cxr-paths.sh
+source "$ROOT/scripts/lib/cxr-paths.sh"
+cxr_paths_init
+DOC="$(cxr_manual_doc_base compendium)"
+MANUAL_DIR="$(dirname "$DOC")"
+cd "$MANUAL_DIR"
+pdflatex -interaction=nonstopmode manual.tex >/dev/null || true
+pdflatex -interaction=nonstopmode manual.tex >/dev/null || true
+[[ -f manual.pdf ]] || { echo "Compendium PDF build failed." >&2; exit 1; }
+echo "Built: $DOC.pdf ($(wc -c < manual.pdf) bytes)"
 
 echo ""
-echo "All lab PDFs in $ROOT/docs/:"
-ls -1 "$ROOT/docs"/CXR-*-MANUAL.pdf "$ROOT/docs"/CXR-BOOTCAMP-LABS-COMPENDIUM.pdf 2>/dev/null | sort
+echo "All lab PDFs under $ROOT/docs/manuals/:"
+find "$ROOT/docs/manuals" -name 'manual.pdf' | sort

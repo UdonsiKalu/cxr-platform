@@ -8,7 +8,7 @@ if command -v docker-compose &>/dev/null; then
 else
   DC=(docker compose)
 fi
-"${DC[@]}" -f compose.redis.yaml up -d
+"${DC[@]}" -f "$ROOT/compose/labs/redis.yaml" up -d
 echo ""
 echo "Redis CLI:       localhost:6379"
 echo "Redis Insight:   http://localhost:5540  (UI — see manual for first-time connect)"
@@ -19,4 +19,4 @@ echo "  Then Browser → keys → cxr:claim:analyzed:demo-1 (run cache-aside fir
 echo ""
 echo "Smoke test:       ./scripts/17-redis-smoke.sh"
 echo "Evidence:         evidence/SW14-redis-verify-2026-05-31.md"
-echo "Manual:           docs/CXR-REDIS-LAB-MANUAL.pdf (./scripts/build-redis-manual-pdf.sh)"
+echo "Manual:           docs/manuals/redis/manual.pdf (./scripts/build-redis-manual-pdf.sh)"

@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'compose.observe.yaml'
+      - 'compose/observe/**'
       - 'observe/**'
       - 'scripts/25-synthetic-readiness-up.sh'
       - 'scripts/26-live-ops-stream-up.sh'
@@ -13,20 +13,20 @@ on:
       - 'docs/operations/**'
       - 'systemd/cxr-atlas-8250.service'
       - 'systemd/cxr-lab.target'
-      - 'docs/PERSISTENT-PORTS.md'
+      - 'docs/runbooks/persistent-ports.md'
       - 'scripts/09-enable-persistent-ports.sh'
       - '.github/workflows/validate-live-ops.yml'
   push:
     branches: [feat/live-ops-stream]
     paths:
-      - 'compose.observe.yaml'
+      - 'compose/observe/**'
       - 'observe/**'
       - 'scripts/25-synthetic-readiness-up.sh'
       - 'scripts/26-live-ops-stream-up.sh'
       - 'scripts/27-live-ops-fault-scenario.sh'
       - 'docs/operations/**'
       - 'systemd/**'
-      - 'docs/PERSISTENT-PORTS.md'
+      - 'docs/runbooks/persistent-ports.md'
       - 'scripts/09-enable-persistent-ports.sh'
       - '.github/workflows/validate-live-ops.yml'
 
@@ -38,7 +38,7 @@ jobs:
 
       - name: Required Live Ops files present
         run: |
-          test -f compose.observe.yaml
+          test -f compose/observe/compose.yaml
           test -f observe/prometheus.yml
           test -f observe/prometheus/cxr_recording_rules.yml
           test -f observe/grafana/provisioning/dashboards/cxr-live-operations-center.json
@@ -63,4 +63,4 @@ jobs:
           test -x scripts/27-live-ops-fault-scenario.sh
 
       - name: Compose observe config parses
-        run: docker compose -f compose.observe.yaml config -q
+        run: docker compose -f compose/observe/compose.yaml config -q

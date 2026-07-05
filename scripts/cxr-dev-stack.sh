@@ -39,13 +39,13 @@ declare -A LAB_UP=(
   [langfuse]=21-langfuse-up.sh
 )
 declare -A LAB_COMPOSE=(
-  [kafka]=compose.kafka.yaml
-  [elk]=compose.elk.yaml
-  [redis]=compose.redis.yaml
-  [graphql]=compose.graphql.yaml
-  [grpc]=compose.grpc.yaml
-  [vault]=compose.vault.yaml
-  [langfuse]=compose.langfuse.yaml
+  [kafka]="$OPS_ROOT/compose/labs/kafka.yaml"
+  [elk]="$OPS_ROOT/compose/labs/elk.yaml"
+  [redis]="$OPS_ROOT/compose/labs/redis.yaml"
+  [graphql]="$OPS_ROOT/compose/labs/graphql.yaml"
+  [grpc]="$OPS_ROOT/compose/labs/grpc.yaml"
+  [vault]="$OPS_ROOT/compose/labs/vault.yaml"
+  [langfuse]="$OPS_ROOT/compose/labs/langfuse.yaml"
 )
 declare -A LAB_NOTE=(
   [kafka]="UI :8082  broker :9092"
@@ -76,7 +76,7 @@ Options (up/down/restart):
 Optional syllabus labs (Kafka, ELK, Redis, …):
   lab list              Table of labs + scripts
   lab up <name>         Run cxr-ops-lab/scripts/*-up.sh
-  lab down <name>       docker compose -f compose.<name>.yaml down
+  lab down <name>       docker compose -f compose/labs/<name>.yaml down
 
 URLs after 'up':
   Claim Studio  ${REHEARSAL_URL}/claim-studio

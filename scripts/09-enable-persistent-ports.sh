@@ -49,5 +49,5 @@ systemctl --user start cxr-lab.target
 echo ""
 "$ROOT/scripts/10-ports-status.sh"
 echo ""
-echo "Done. See $ROOT/docs/PERSISTENT-PORTS.md"
+echo "Done. See $ROOT/docs/runbooks/persistent-ports.md"
 echo "Open Cursor workspace: /home/udonsi-kalu/staging (for .vscode port labels)"

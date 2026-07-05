@@ -16,9 +16,12 @@ echo "Cluster: $(kubectl config current-context) ($(cxr_k8_runtime))"
 "$ROOT/scripts/k8-load-exporter.sh" start
 
 # Reload Prometheus config (new scrape jobs / after observe restart)
+# shellcheck source=lib/cxr-paths.sh
+source "$ROOT/scripts/lib/cxr-paths.sh"
+cxr_paths_init
 if command -v docker &>/dev/null; then
-  docker compose -f "$ROOT/compose.observe.yaml" restart prometheus 2>/dev/null \
-    || docker-compose -f "$ROOT/compose.observe.yaml" restart prometheus 2>/dev/null \
+  docker compose -f "$CXR_COMPOSE_OBSERVE" restart prometheus 2>/dev/null \
+    || docker-compose -f "$CXR_COMPOSE_OBSERVE" restart prometheus 2>/dev/null \
     || true
 fi
 
@@ -31,4 +34,4 @@ echo "  Load exporter:       http://127.0.0.1:9102/metrics"
 echo "  KSM metrics:         http://127.0.0.1:9091/metrics"
 echo ""
 echo "Verify targets cxr-load-exporter + kube-state-metrics are UP, then run Locust :8092."
-echo "Runbook: docs/K8-LOAD-OBSERVE-RUNBOOK.md"
+echo "Runbook: docs/runbooks/k8-load-observe.md"

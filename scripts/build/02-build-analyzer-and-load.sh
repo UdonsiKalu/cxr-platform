@@ -14,8 +14,6 @@ if [[ ! -f "$ANALYZER_SRC/analyzer_service_app.py" ]]; then
   exit 1
 fi
 
-cp "$ROOT/requirements-analyzer-docker.txt" "$ANALYZER_SRC/requirements-analyzer-docker.txt"
-
-"$ROOT/scripts/02-build-analyzer-docker-only.sh"
+"$ROOT/scripts/build/02-build-analyzer-docker-only.sh"
 load_image_to_cluster "$IMAGE" "$ROOT"
 echo "Image $IMAGE ready for cluster ($(cxr_k8_runtime))"
