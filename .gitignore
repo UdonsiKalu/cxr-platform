@@ -19,4 +19,3 @@ docs/* (Copy)*.pdf
 *.pyc
 load/locust/.venv/
 observe/**/.venv/
-docs/* (Copy)*.pdf

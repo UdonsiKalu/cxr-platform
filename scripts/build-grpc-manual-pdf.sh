@@ -1,13 +1,2 @@
 #!/usr/bin/env bash
-set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DOC="$ROOT/docs/CXR-GRPC-LAB-MANUAL"
-cd "$ROOT/docs"
-if ! command -v pdflatex &>/dev/null; then
-  echo "pdflatex not found. Install: sudo apt install texlive-latex-base texlive-latex-extra" >&2
-  exit 1
-fi
-pdflatex -interaction=nonstopmode "$(basename "$DOC").tex" >/dev/null || true
-pdflatex -interaction=nonstopmode "$(basename "$DOC").tex" >/dev/null || true
-[[ -f "$DOC.pdf" ]] || { echo "PDF build failed." >&2; exit 1; }
-echo "Built: $DOC.pdf ($(wc -c < "$DOC.pdf") bytes)"
+exec "$(dirname "$0")/build/build-grpc-manual-pdf.sh" "$@"
