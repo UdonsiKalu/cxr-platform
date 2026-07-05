@@ -1,0 +1,14 @@
+# PERF-008 Experiment B — in-flight/backpressure scaling + CPU (NOT queue-depth)
+# Signal: average in-flight /analyze requests per ready analyzer pod.
+# Requires analyzer /metrics scrape (k8-analyzer-metrics-forward.sh) + perf008 image.
+# Apply: helm upgrade cxr-analyzer ./helm/cxr-analyzer -n cxr-ui \
+#   -f helm/cxr-analyzer/values.yaml -f helm/cxr-analyzer/values-perf008-exp-b.yaml
+env:
+  CXR_ANALYZER_MAX_CONCURRENT: "4"
+
+autoscaling:
+  keda:
+    prometheus:
+      mode: backpressure
+      backpressureQuery: sum(cxr_analyzer_inflight_requests) / clamp_min(cxr_analyzer_replicas, 1)
+      backpressureThreshold: "2"

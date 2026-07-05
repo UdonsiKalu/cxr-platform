@@ -1,0 +1,67 @@
+{
+  "stamp": "20260621-184613",
+  "mode": "cumulative",
+  "stages": [
+    {
+      "csv": "/home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-184452/gate-20260621-184613-cumulative.csv",
+      "users_target": 100,
+      "samples": 9,
+      "max_users": 100.0,
+      "max_rps": 55.0,
+      "max_p95_ms": 330.0,
+      "max_failures_per_s": 0.0,
+      "max_analyzer_replicas": 4,
+      "max_pending_pods": 0,
+      "collapse_count": 0,
+      "collapses": [],
+      "pass": true,
+      "reasons": []
+    },
+    {
+      "csv": "/home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-184452/gate-20260621-184613-cumulative.csv",
+      "users_target": 150,
+      "samples": 9,
+      "max_users": 152.0,
+      "max_rps": 79.3,
+      "max_p95_ms": 530.0,
+      "max_failures_per_s": 0.0,
+      "max_analyzer_replicas": 6,
+      "max_pending_pods": 0,
+      "collapse_count": 0,
+      "collapses": [],
+      "pass": true,
+      "reasons": []
+    },
+    {
+      "csv": "/home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-184452/gate-20260621-184613-cumulative.csv",
+      "users_target": 200,
+      "samples": 35,
+      "max_users": 200.0,
+      "max_rps": 101.1,
+      "max_p95_ms": 790.0,
+      "max_failures_per_s": 0.0,
+      "max_analyzer_replicas": 8,
+      "max_pending_pods": 0,
+      "collapse_count": 0,
+      "collapses": [],
+      "pass": true,
+      "reasons": []
+    },
+    {
+      "csv": "/home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-a-20260621-184452/gate-20260621-184613-cumulative.csv",
+      "users_target": 50,
+      "samples": 9,
+      "max_users": 50.0,
+      "max_rps": 28.1,
+      "max_p95_ms": 170.0,
+      "max_failures_per_s": 0.0,
+      "max_analyzer_replicas": 2,
+      "max_pending_pods": 0,
+      "collapse_count": 0,
+      "collapses": [],
+      "pass": true,
+      "reasons": []
+    }
+  ],
+  "failed": false
+}

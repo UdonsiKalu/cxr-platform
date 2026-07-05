@@ -1,0 +1,15 @@
+{{- if .Values.autoscaling.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cxr-analyzer
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: cxr-analyzer
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  minAvailable: {{ .Values.autoscaling.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: cxr-analyzer
+{{- end }}

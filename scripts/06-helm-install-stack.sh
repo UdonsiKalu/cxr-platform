@@ -65,7 +65,23 @@ EOF
 echo "==> metrics-server (HPA prerequisite)"
 "$ROOT/scripts/09-metrics-server-install.sh"
 
+if [[ "${CXR_INSTALL_KEDA:-1}" == "1" ]]; then
+  echo "==> KEDA (SCALE-001 — optional ScaledObject)"
+  "$ROOT/scripts/11-keda-install.sh" || echo "WARN: KEDA install skipped/failed — set autoscaling.keda.enabled=false" >&2
+fi
+
+if [[ "${CXR_INSTALL_VPA:-1}" == "1" ]]; then
+  echo "==> VPA recommender (SCALE-003 — recommendation only)"
+  "$ROOT/scripts/12-vpa-install.sh" || echo "WARN: VPA install skipped/failed — set autoscaling.vpa.enabled=false" >&2
+fi
+
 ensure_namespace
+
+# KEDA ScaledObject cannot coexist with a legacy Helm HPA named cxr-analyzer.
+if grep -A6 'keda:' "$ROOT/helm/cxr-analyzer/values.yaml" | grep -q 'enabled: true'; then
+  echo "  Removing legacy HPA cxr-analyzer (KEDA ScaledObject manages scale)..."
+  kubectl delete hpa cxr-analyzer -n "$NS" --ignore-not-found
+fi
 
 echo "==> Helm: cxr-analyzer (may wait for warm startup probes)..."
 # Analyzer warm boot is 7–15m — do not block Helm on --wait (use 16-k8-stack-verify.sh).

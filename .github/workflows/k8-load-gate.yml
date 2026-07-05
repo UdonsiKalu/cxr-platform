@@ -1,0 +1,48 @@
+# GATE-001 — K8 load regression gate (self-hosted / local lab)
+name: k8-load-gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      stages:
+        description: "Space-separated user counts"
+        default: "50 100 150"
+      soft_200:
+        description: "Report-only 200-user stage"
+        type: boolean
+        default: true
+
+jobs:
+  load-gate:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preflight
+        run: |
+          export PATH="$PWD/bin:$PATH"
+          ./scripts/16-k8-stack-verify.sh
+          ./scripts/23-k8-load-observe-up.sh
+
+      - name: Helm stack
+        run: |
+          export PATH="$PWD/bin:$PATH"
+          ./scripts/06-helm-install-stack.sh
+
+      - name: Run gate
+        env:
+          CXR_GATE_STAGES: ${{ inputs.stages }}
+        run: |
+          export PATH="$PWD/bin:$PATH"
+          ARGS=()
+          if [[ "${{ inputs.soft_200 }}" == "true" ]]; then
+            ARGS+=(--soft-200)
+          fi
+          ./scripts/k8-load-gate.sh "${ARGS[@]}"
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cxr-load-gate-report
+          path: /tmp/cxr-load-gate/gate-report-*.json
