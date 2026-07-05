@@ -21,11 +21,11 @@ git checkout chore/repo-git-hygiene    # last state WITH symlinks
 
 Each Phase 4 commit is one logical step — use `git log --oneline` and `git revert <sha>`.
 
-| Commit (after push) | Reverts |
-|---------------------|---------|
-| `paths: add cxr-paths.sh + update compose callers` | Restore symlink usage in scripts |
-| `chore(docs): remove docs/ symlinks, fix internal links` | Restore docs symlinks |
-| `chore(root): remove compose/docker symlinks` | Restore root symlinks |
+| Commit | Reverts |
+|--------|---------|
+| `cbc57c2` paths: add cxr-paths.sh and point scripts/CI at canonical paths | Restore symlink usage in scripts |
+| `19d0981` chore(docs): remove docs/ symlinks and fix internal links | Restore docs symlinks |
+| `3bae95a` chore(root): remove compose/docker root symlinks | Restore root symlinks |
 
 ## Path mapping (old symlink → canonical)
 
