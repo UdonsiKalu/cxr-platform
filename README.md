@@ -1,8 +1,20 @@
 # CXR ops lab — Starter track **SW.1–SW.8** (canonical)
 
-**GitHub:** https://github.com/UdonsiKalu/cxr-ops-lab (Argo CD + Helm source of truth)
+**GitHub:** https://github.com/UdonsiKalu/cxr-platform
 
 Bootcamp labs live here so **`cxrlabs-dev`** (production gateway/analysis compose) and **`:8251` rehearsal dev** stay untouched.
+
+## Repo layout
+
+| Path | Purpose |
+|------|---------|
+| [`compose/`](compose/README.md) | Docker Compose stacks (core, observe, labs) |
+| [`docker/`](docker/README.md) | UI and analyzer Dockerfiles |
+| [`docs/`](docs/README.md) | Runbooks, bootcamp manuals, standards |
+| [`scripts/`](scripts/README.md) | Entry-point scripts (`00`–`27`) + `build/` |
+| `helm/`, `k8s/`, `observe/`, `load/` | Runtime configs (unchanged) |
+
+Root symlinks (`compose.observe.yaml`, `docs/K8-DEPLOY.md`, etc.) keep existing commands working.
 
 **App source (build context):** `cxr-ui-prune-rehearsal/cxr-ui`  
 **Rehearsal dev:** `npm run dev:rehearsal` on **:8251** (systemd) — not this folder.
