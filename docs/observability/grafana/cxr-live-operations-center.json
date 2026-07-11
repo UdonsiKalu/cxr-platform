@@ -1,0 +1,209 @@
+{
+  "title": "CXR Live Operations Center",
+  "uid": "cxr-live-ops",
+  "tags": ["cxr", "live-ops", "synthetic", "readiness"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Disclaimer",
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "**Metrics generated from synthetic operational-readiness traffic.** Not customer production traffic. No PHI."
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "System health",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 3 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "up{job=\"cxr-synthetic-readiness\"}", "legendFormat": "synthetic exporter" }],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Availability",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 3 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "cxr_synthetic_availability_ratio{profile=\"operational_readiness\"}", "legendFormat": "avail" }],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "decimals": 2, "min": 0, "max": 1 } }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "p95 latency (synthetic analyze)",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 3 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_synthetic_p95_latency_seconds{profile=\"operational_readiness\"}", "legendFormat": "p95" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Error rate",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 3 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_synthetic_error_rate{profile=\"operational_readiness\"}", "legendFormat": "errors/s per req" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 6,
+      "type": "gauge",
+      "title": "Error budget remaining (99.5% SLO)",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 7 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "clamp_min((cxr_synthetic_availability_ratio{profile=\"operational_readiness\"} - 0.995) / 0.005, 0)",
+          "legendFormat": "budget"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1 } }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Synthetic requests per second",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_synthetic_rps{profile=\"operational_readiness\"}", "legendFormat": "RPS" },
+        { "expr": "sum(rate(synthetic_requests_total[1m])) by (profile)", "legendFormat": "all statuses" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "Active synthetic users",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "synthetic_active_users{profile=\"operational_readiness\"}", "legendFormat": "users" }],
+      "fieldConfig": { "defaults": { "unit": "short", "decimals": 0 } }
+    },
+    {
+      "id": 9,
+      "type": "stat",
+      "title": "Synthetic profile",
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "synthetic_profile{profile=\"operational_readiness\"}", "legendFormat": "{{profile}}" }],
+      "fieldConfig": { "defaults": { "mappings": [{ "type": "value", "options": { "1": { "text": "operational_readiness" } } }] } }
+    },
+    {
+      "id": 10,
+      "type": "stat",
+      "title": "Analyzer pod count",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "cxr_analyzer_replicas or vector(1)", "legendFormat": "replicas" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Analyzer queue wait p95 (ms)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_analyzer_queue_wait_p95_ms", "legendFormat": "queue p95" },
+        { "expr": "cxr_locust_p95_ms", "legendFormat": "locust p95 (if running)" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "HPA / replica signals",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "cxr_analyzer_replicas", "legendFormat": "analyzer replicas" },
+        { "expr": "cxr_ui_replicas", "legendFormat": "ui replicas" },
+        { "expr": "cxr_hpa_analyzer_target_cpu_percent", "legendFormat": "analyzer HPA target %" }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "lineWidth": 2 } } }
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "CPU usage (node %)",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 27 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "cxr_node_cpu_percent", "legendFormat": "node CPU %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "lineWidth": 2, "fillOpacity": 15 } } }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Memory usage (node %)",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 27 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "cxr_node_memory_percent", "legendFormat": "node memory %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "lineWidth": 2, "fillOpacity": 15 } } }
+    },
+    {
+      "id": 15,
+      "type": "stat",
+      "title": "GPU utilization",
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 27 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "vector(0)", "legendFormat": "N/A local" }],
+      "options": { "textMode": "name" },
+      "fieldConfig": { "defaults": { "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A on local profile" } } }] } }
+    },
+    {
+      "id": 16,
+      "type": "stat",
+      "title": "Pod restarts (analyzer ns)",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 27 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(kube_pod_container_status_restarts_total{namespace=\"cxr-ui\",pod=~\"cxr-analyzer.*\"}) or vector(0)",
+          "legendFormat": "restarts"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 17,
+      "type": "text",
+      "title": "Qdrant / Ollama latency",
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 31 },
+      "options": {
+        "mode": "markdown",
+        "content": "**Qdrant / Ollama:** use Jaeger spans (`retrieval`, `llm_inference`) on synthetic analyze traces until dedicated dependency scrape is wired."
+      }
+    },
+    {
+      "id": 18,
+      "type": "text",
+      "title": "Recent incidents / readiness reviews",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 35 },
+      "options": {
+        "mode": "markdown",
+        "content": "**Readiness reviews:** see `cxr-portfolio/CHANGELOG.md` and `cxr-ops-lab/docs/operations/live-operations-center.md`. Synthetic traffic validates analyze path only — not production incident feed."
+      }
+    }
+  ]
+}

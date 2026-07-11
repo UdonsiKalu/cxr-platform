@@ -1,0 +1,30 @@
+# SW.14 — Redis lab (standalone; cache-aside demo script, not wired to cxr-ui yet)
+# Redis CLI     redis://localhost:6379
+# Redis Insight http://localhost:5540  (browse keys — add connection host redis:6379)
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis-insight:
+    image: redis/redisinsight:2.70
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis_insight_data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis_insight_data:

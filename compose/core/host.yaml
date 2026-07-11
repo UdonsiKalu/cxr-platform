@@ -1,0 +1,23 @@
+# Linux lab overlay — same network as :8251 for SQL, Qdrant, Ollama, sandbox APIs
+# 04-compose-up.sh applies this automatically on Linux.
+
+services:
+  cxr-ui:
+    network_mode: host
+    ports: []
+    depends_on: []
+    env_file:
+      - path: ../../.env.compose.local
+        required: false
+    environment:
+      QDRANT_URL: http://127.0.0.1:6333
+      OLLAMA_HOST: http://127.0.0.1:11434
+      CXR_GATEWAY_URL: http://127.0.0.1:8181
+      CXR_API_BASE: http://127.0.0.1:8281
+      CXR_ATLAS_STAGING_ROOT: /staging
+      CXR_ATLAS_VAULT_META: /staging/cxr_architecture_vault/CXR-Meta
+      CXR_DOCS_LIBRARY_ROOT: /staging/cxrlabs-dev/claim_analysis_tools/platform/docs/library
+    volumes:
+      - ${CXR_ANALYZERS_HOST:-../../cxrlabs-dev/claim_analysis_tools}:/analyzers:ro
+      - ${CXR_STAGING_HOST:-../..}:/staging:ro
+      - cxr_ui_data:/app/data

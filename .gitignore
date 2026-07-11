@@ -14,4 +14,8 @@ docs/*.out
 docs/*.toc
 docs/* (Copy)*.pdf
 .venv/
-scripts/lib/__pycache__/
+**/.venv/
+**/__pycache__/
+*.pyc
+load/locust/.venv/
+observe/**/.venv/
