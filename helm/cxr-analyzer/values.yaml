@@ -52,8 +52,11 @@ probes:
 
 autoscaling:
   enabled: true
+  # GIT-001 / GATE-002: grid winner used minReplicas 1; lab baseline keeps 2 to
+  # reduce cold-start churn (c2/c6 also passed the gate with min=2, UI max=4).
   minReplicas: 2
   # Docker Desktop single-node: 20 × 2Gi request exhausts memory → Pending + HPA thrash (LOAD-003 2026-06-18).
+  # GATE-002 winner (c4): maxReplicas 8.
   maxReplicas: 8
   targetCPUUtilizationPercentage: 70
   pdb:
