@@ -1,6 +1,6 @@
 namespace: cxr-ui
 
-gitOpsDeployMarker: "gha-fcb767e076318af1"
+gitOpsDeployMarker: "gha-bf5618b943f310d7"
 
 image:
   repository: cxr-ui
