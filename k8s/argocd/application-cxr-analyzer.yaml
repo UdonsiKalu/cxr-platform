@@ -16,17 +16,10 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-      # LOAD-003 stability (2026-06-18): override via `kubectl patch application` or push values.yaml to Git.
-      # parameters:
-      #   - name: image.tag
-      #     value: perf003
-      #     forceString: true
-      #   - name: autoscaling.maxReplicas
-      #     value: "8"
-      #   - name: autoscaling.minReplicas
-      #     value: "2"
-      #   - name: autoscaling.keda.enabled
-      #     value: "true"
+      # GIT-001: source of truth is helm/cxr-analyzer/values.yaml on Git main.
+      # Prefer push + Argo sync over `kubectl patch application` Helm parameters
+      # (those were a temporary LOAD-003 / GATE-002 lab workaround and cause drift).
+      # Baseline: maxReplicas 8, minReplicas 2, KEDA p95ThresholdMs 2000.
   destination:
     server: https://kubernetes.default.svc
     namespace: cxr-ui

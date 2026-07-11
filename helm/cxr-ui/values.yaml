@@ -45,5 +45,7 @@ probes:
 autoscaling:
   enabled: true
   minReplicas: 1
-  maxReplicas: 5
+  # GATE-002 winner (c4): UI max 4. Candidate with max 5 failed @200 users
+  # (UI thrash → 116 failures/s while analyzer stayed flat). See GIT-001.
+  maxReplicas: 4
   targetCPUUtilizationPercentage: 80

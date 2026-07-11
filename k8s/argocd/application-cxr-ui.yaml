@@ -19,9 +19,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-      # parameters:
-      #   - name: autoscaling.maxReplicas
-      #     value: "5"
+      # GIT-001: do not pin live Helm parameters here. Edit helm/cxr-ui/values.yaml,
+      # push to main, let Argo sync. Live kubectl patches create Git drift.
+      # GATE-002 winner: autoscaling.maxReplicas = 4 (see values.yaml).
   destination:
     server: https://kubernetes.default.svc
     namespace: cxr-ui
