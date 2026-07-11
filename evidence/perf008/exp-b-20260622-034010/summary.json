@@ -1,0 +1,14 @@
+{
+  "csv": "/home/udonsi-kalu/staging/cxr-ops-lab/evidence/perf008/exp-b-20260622-034010/gate-20260622-034211-cumulative.csv",
+  "max_p95_ms": 820.0,
+  "p95_slope_ms_per_sample": 2.26,
+  "max_failures_per_s": 115.8,
+  "max_analyzer_replicas_csv": 8,
+  "replica_oscillation_collapses": 0,
+  "gate_all_pass": null,
+  "experiment": "B",
+  "max_inflight": null,
+  "queue_wait_p95_s": 0.0009611764705882352,
+  "replica_changes_5m_max": 4.0,
+  "time_backpressure_to_scale_s": null
+}

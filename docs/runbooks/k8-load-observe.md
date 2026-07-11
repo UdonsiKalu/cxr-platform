@@ -1,6 +1,8 @@
 # K8 load test — live Grafana + Jaeger (OBS-001)
 
-Run **after** stack verify (`16-k8-stack-verify.sh`). Uses **current GitOps** Helm values (e.g. `maxReplicas: 20`).
+Run **after** stack verify (`16-k8-stack-verify.sh`). Uses **current GitOps** Helm values.
+
+**Automated regression gate:** [K8-LOAD-GATE.md](../K8-LOAD-GATE.md) · `./scripts/k8-load-gate.sh`
 
 ## 1. Save / commit (before long run)
 

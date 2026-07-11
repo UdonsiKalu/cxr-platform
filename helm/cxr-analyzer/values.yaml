@@ -5,7 +5,7 @@ gitOpsDeployMarker: "gha-fcb767e076318af1"
 
 image:
   repository: cxr-analyzer
-  tag: local
+  tag: perf003
   pullPolicy: IfNotPresent
 
 replicaCount: 1
@@ -24,6 +24,8 @@ env:
   CXR_QDRANT_URL: "http://host.docker.internal:6333"
   CXR_SQL_SERVER: "host.docker.internal,1433"
   OTEL_EXPORTER_OTLP_ENDPOINT: "http://host.docker.internal:4318"
+  # PERF-008: set >0 to enable semaphore + cxr_analyzer_queue_depth (optional lab)
+  CXR_ANALYZER_MAX_CONCURRENT: "0"
 
 resources:
   requests:
@@ -50,6 +52,28 @@ probes:
 
 autoscaling:
   enabled: true
-  minReplicas: 1
-  maxReplicas: 20
+  minReplicas: 2
+  # Docker Desktop single-node: 20 × 2Gi request exhausts memory → Pending + HPA thrash (LOAD-003 2026-06-18).
+  maxReplicas: 8
   targetCPUUtilizationPercentage: 70
+  pdb:
+    enabled: true
+    minAvailable: 1
+  keda:
+    # SCALE-001: KEDA replaces CPU-only HPA when enabled (requires scripts/11-keda-install.sh).
+    enabled: true
+    pollingInterval: 15
+    cooldownPeriod: 120
+    prometheus:
+      enabled: true
+      serverAddress: http://host.docker.internal:9090
+      # Experiment A (default): E2E Locust p95 + CPU. Experiment B: backpressure + CPU.
+      mode: p95  # p95 | backpressure
+      query: cxr_locust_p95_ms
+      p95ThresholdMs: 2000
+      backpressureQuery: sum(cxr_analyzer_inflight_requests) / clamp_min(cxr_analyzer_replicas, 1)
+      backpressureThreshold: "2"
+  vpa:
+    # SCALE-003 / PROF: recommendation-only until requests are tuned (requires scripts/12-vpa-install.sh).
+    enabled: true
+    updateMode: "Off"

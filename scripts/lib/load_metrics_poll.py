@@ -59,6 +59,51 @@ def parse_memory_to_bytes(value: str) -> float:
     return float(value)
 
 
+def deployment_ready_replicas(namespace: str, name: str) -> int:
+    """Ready replicas from Deployment status (KEDA/Helm ground truth)."""
+    data = kubectl_json(["get", "deployment", name, "-n", namespace])
+    if not data:
+        return 0
+    status = data.get("status") or {}
+    ready = status.get("readyReplicas")
+    if ready is not None:
+        return int(ready)
+    return int(status.get("replicas") or 0)
+
+
+def scaledobject_replicas(namespace: str, name: str) -> int | None:
+    """KEDA ScaledObject status.currentReplicas when present."""
+    data = kubectl_json(["get", "scaledobject", name, "-n", namespace])
+    if not data:
+        return None
+    raw = (data.get("status") or {}).get("scaleTargetGVKR")
+    _ = raw  # presence check only; replicas live on status
+    current = (data.get("status") or {}).get("currentReplicas")
+    if current is None:
+        return None
+    return int(current)
+
+
+def analyzer_cpu_utilization_pct(
+    namespace: str,
+    *,
+    pod_prefix: str = "cxr-analyzer-",
+    cpu_request_mcores: float | None = None,
+) -> int:
+    """Synthetic CPU % when legacy HPA is absent (KEDA path)."""
+    request_m = cpu_request_mcores
+    if request_m is None:
+        request_m = float(os.environ.get("CXR_ANALYZER_CPU_REQUEST_M", "500"))
+    replicas = deployment_ready_replicas(namespace, "cxr-analyzer")
+    if replicas <= 0:
+        return 0
+    total_m = pod_cpu_sum_mcores(namespace, pod_prefix)
+    capacity = replicas * request_m
+    if capacity <= 0:
+        return 0
+    return int(round(total_m / capacity * 100.0))
+
+
 def hpa_metrics(namespace: str) -> dict[str, dict[str, float | int]]:
     data = kubectl_json(["get", "hpa", "-n", namespace])
     result: dict[str, dict[str, float | int]] = {}
@@ -200,8 +245,26 @@ def collect_row(
         users = estimated
 
     hpa = hpa_metrics(namespace)
-    an = hpa.get("cxr-analyzer", {})
+    an_hpa = hpa.get("cxr-analyzer", {})
     ui = hpa.get("cxr-ui", {})
+
+    # OBS-002: KEDA removes legacy cxr-analyzer HPA — use Deployment readyReplicas.
+    analyzer_reps = deployment_ready_replicas(namespace, "cxr-analyzer")
+    keda_reps = scaledobject_replicas(namespace, "cxr-analyzer")
+    if keda_reps is not None and keda_reps > analyzer_reps:
+        analyzer_reps = keda_reps
+
+    if an_hpa:
+        an_cpu_current = an_hpa.get("current_cpu_pct", "")
+        an_cpu_target = an_hpa.get("target_cpu_pct", "")
+    else:
+        an_cpu_current = analyzer_cpu_utilization_pct(namespace)
+        an_cpu_target = int(os.environ.get("CXR_ANALYZER_CPU_TARGET_PCT", "70"))
+
+    ui_reps = ui.get("replicas")
+    if ui_reps in ("", None):
+        ui_reps = deployment_ready_replicas(namespace, "cxr-ui")
+
     node_cpu, node_mem = node_utilization()
 
     return {
@@ -212,12 +275,12 @@ def collect_row(
         "locust_failures_per_s": round(locust.get("failures_per_s", 0), 3),
         "locust_p50_ms": round(locust.get("p50_ms", 0), 1),
         "locust_p95_ms": round(locust.get("p95_ms", 0), 1),
-        "hpa_analyzer_target_cpu_pct": an.get("target_cpu_pct", ""),
-        "hpa_analyzer_current_cpu_pct": an.get("current_cpu_pct", ""),
+        "hpa_analyzer_target_cpu_pct": an_cpu_target,
+        "hpa_analyzer_current_cpu_pct": an_cpu_current,
         "hpa_ui_target_cpu_pct": ui.get("target_cpu_pct", ""),
         "hpa_ui_current_cpu_pct": ui.get("current_cpu_pct", ""),
-        "analyzer_replicas": an.get("replicas", ""),
-        "ui_replicas": ui.get("replicas", ""),
+        "analyzer_replicas": analyzer_reps,
+        "ui_replicas": ui_reps,
         "analyzer_pending_pods": pending_pods(namespace, "cxr-analyzer-"),
         "ui_pending_pods": pending_pods(namespace, "cxr-ui-"),
         "analyzer_pod_cpu_mcores_sum": round(pod_cpu_sum_mcores(namespace, "cxr-analyzer-"), 0),

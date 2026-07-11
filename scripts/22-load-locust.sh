@@ -81,6 +81,37 @@ case "$MODE" in
       -r "${CXR_LOCUST_SPAWN:-2}" \
       -t "${CXR_LOCUST_TIME:-10m}"
     ;;
+  --autostart)
+    echo "== CXR Locust autostart (web :${WEB_PORT}) =="
+    echo "  Target: ${HOST}"
+    echo "  Users:  ${CXR_LOCUST_USERS:-10}  spawn: ${CXR_LOCUST_SPAWN:-2}/s  time: ${CXR_LOCUST_TIME:-10m}"
+    exec "$VENV/bin/locust" \
+      -f "$LOCUST_DIR/locustfile.py" \
+      --host "$HOST" \
+      --web-host 127.0.0.1 \
+      --web-port "${WEB_PORT}" \
+      -u "${CXR_LOCUST_USERS:-10}" \
+      -r "${CXR_LOCUST_SPAWN:-2}" \
+      --run-time "${CXR_LOCUST_TIME:-10m}" \
+      --autostart \
+      --autoquit 5
+    ;;
+  --ramp-autostart)
+    LOCUSTFILE="${CXR_LOCUST_RAMP_FILE:-$LOCUST_DIR/locustfile-ramp.py}"
+    echo "== CXR Locust cumulative ramp [${CXR_RAMP_PROFILE:-lightweight_mixed}] (web :${WEB_PORT}) =="
+    echo "  Target: ${HOST}"
+    echo "  Ramp:   ${CXR_RAMP_START_USERS:-25} +${CXR_RAMP_STEP_USERS:-25} → ${CXR_RAMP_MAX_USERS:-200}"
+    echo "  Tier:   ${CXR_RAMP_STAGE_SECONDS:-90}s  hold@max: ${CXR_RAMP_HOLD_AT_MAX_S:-120}s"
+    echo "  Run:    ${CXR_LOCUST_TIME:-auto}"
+    exec "$VENV/bin/locust" \
+      -f "$LOCUSTFILE" \
+      --host "$HOST" \
+      --web-host 127.0.0.1 \
+      --web-port "${WEB_PORT}" \
+      --run-time "${CXR_LOCUST_TIME:-20m}" \
+      --autostart \
+      --autoquit 5
+    ;;
   --help|-h)
     cat <<EOF
 Usage: $0 [check|--restart|--headless]
