@@ -1,0 +1,16 @@
+[Unit]
+Description=CXR Rep-Eng Curriculum Track UI (port 8262)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-repeng-curriculum
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/python3 server.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/tmp/cxr-repeng-curriculum-8262.log
+StandardError=append:/tmp/cxr-repeng-curriculum-8262.log
+
+[Install]
+WantedBy=cxr-lab.target

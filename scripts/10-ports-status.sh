@@ -12,7 +12,13 @@ probe() {
 }
 
 echo "CXR port probe ($(date -Iseconds))"
+probe 8250 "Atlas UI (systemd)"
 probe 8251 "rehearsal (systemd)"
+probe 8253 "N2S M1 lab"
+probe 8254 "N2S A–D panel"
+probe 8255 "N2S safety Ph5–7"
+probe 8256 "N2S Rep-Eng Workbench"
+probe 8262 "Rep-Eng Curriculum Track"
 probe 3000 "compose lab (SW.2)"
 probe 3002 "SW.1 Docker UI"
 probe 6335 "Qdrant compose (/dashboard for UI)"
@@ -25,9 +31,31 @@ probe 6333 "Qdrant host (optional)"
 probe 9443 "Portainer"
 
 echo ""
+echo "GPU:"
+if command -v nvidia-smi >/dev/null 2>&1; then
+  nvidia-smi --query-gpu=name,power.limit,persistence_mode,temperature.gpu --format=csv,noheader 2>/dev/null | sed 's/^/  /'
+  printf '  nvidia-gpu-power-limit: %s\n' "$(systemctl is-enabled nvidia-gpu-power-limit.service 2>/dev/null || echo n/a)"
+else
+  echo "  (no nvidia-smi)"
+fi
+
+echo ""
 echo "systemd (user):"
-for u in cxr-rehearsal-dev cxr-ops-lab-compose cxr-sw1-test cxr-k8-forward cxr-observe cxr-lab.target; do
-  printf '  %-24s %s\n' "$u:" "$(systemctl --user is-active "$u" 2>/dev/null || echo n/a)"
+for u in \
+  cxr-atlas-8250 \
+  cxr-rehearsal-dev \
+  n2s-lab-8253 \
+  n2s-panel-8254 \
+  n2s-safety-8255 \
+  n2s-repeng-8256 \
+  cxr-repeng-curriculum-8262 \
+  cxr-ops-lab-compose \
+  cxr-sw1-test \
+  cxr-k8-forward \
+  cxr-observe \
+  cxr-lab.target
+do
+  printf '  %-32s %s\n' "$u:" "$(systemctl --user is-active "$u" 2>/dev/null || echo n/a)"
 done
 
 echo ""

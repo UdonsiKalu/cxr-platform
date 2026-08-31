@@ -1,0 +1,4 @@
+# Boot-time NVIDIA power cap (RTX 3090 Research profile).
+# Used by /etc/systemd/system/nvidia-gpu-power-limit.service
+# Profiles (match :8256 Workbench): research=240, quiet=200, max=370
+WATTS=240
