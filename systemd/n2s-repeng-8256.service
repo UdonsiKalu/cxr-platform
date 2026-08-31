@@ -1,0 +1,17 @@
+[Unit]
+Description=N2S Rep-Eng Workbench UI (port 8256)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-evidence-grounding-lab-repeng
+Environment=PATH=/home/udonsi-kalu/staging/cxr-evidence-grounding-lab/.venv-phase9/bin:/usr/local/bin:/usr/bin:/bin
+# Live Run needs Phase-9 HF stack (accelerate/transformers/CUDA)
+ExecStart=/home/udonsi-kalu/staging/cxr-evidence-grounding-lab/.venv-phase9/bin/python server.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/tmp/n2s-repeng-8256.log
+StandardError=append:/tmp/n2s-repeng-8256.log
+
+[Install]
+WantedBy=cxr-lab.target

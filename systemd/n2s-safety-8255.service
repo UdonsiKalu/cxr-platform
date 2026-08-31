@@ -1,0 +1,16 @@
+[Unit]
+Description=N2S Phase 5–7 safety panel UI (port 8255)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/udonsi-kalu/staging/cxr-evidence-grounding-lab-safety
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/python3 server.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/tmp/n2s-safety-8255.log
+StandardError=append:/tmp/n2s-safety-8255.log
+
+[Install]
+WantedBy=cxr-lab.target
